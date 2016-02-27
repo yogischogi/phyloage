@@ -10,15 +10,21 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/yogischogi/phylofriend/genetic"
 )
 
 // Element is a node or a leaf of the tree.
 type Element struct {
 	SNPs     []string
 	STRCount float64
+	// Person may be a real person from sample data
+	// or a virtual ancestor (modal haplotype).
+	Person *genetic.Person
 }
 
 // Sample represents the genetic sample of an individual.
+// This is a leaf of the phylogenetic tree.
 type Sample struct {
 	Element
 	// ID od this sample, usually the kit number.
@@ -26,6 +32,7 @@ type Sample struct {
 }
 
 // Clade models a haplogroup or subclade.
+// A clade represents a node of the phylogenetic tree.
 type Clade struct {
 	Element
 	Samples   []Sample
@@ -135,12 +142,83 @@ func (c *Clade) AddSubclade(clade Clade) {
 	c.Subclades = append(c.Subclades, clade)
 }
 
+// InsertPersons traverses the tree and adds the appropriate
+// person to a leaf if the ID of the sample and the person's ID
+// are identical.
+func (c *Clade) InsertPersons(persons []*genetic.Person) {
+	// Create hash map of persons' IDs.
+	personsMap := make(map[string]*genetic.Person)
+	for i, _ := range persons {
+		personsMap[persons[i].ID] = persons[i]
+	}
+	// Search samples matching person IDs.
+	for i, _ := range c.Samples {
+		if person, exists := personsMap[c.Samples[i].ID]; exists {
+			c.Samples[i].Person = person
+		}
+	}
+	// Search subclades for matching person IDs.
+	for i, _ := range c.Subclades {
+		c.Subclades[i].InsertPersons(persons)
+	}
+}
+
+// CalculateModalHaplotypes calculates the modal haplotype for
+// this clade and all subclades.
+func (c *Clade) CalculateModalHaplotypes() {
+	// Create a list of haplotypes from samples and subclades.
+	persons := make([]*genetic.Person, 0)
+	for i, _ := range c.Samples {
+		if c.Samples[i].Person != nil {
+			persons = append(persons, c.Samples[i].Person)
+		}
+	}
+	for i, _ := range c.Subclades {
+		c.Subclades[i].CalculateModalHaplotypes()
+		if c.Subclades[i].Person != nil {
+			persons = append(persons, c.Subclades[i].Person)
+		}
+	}
+
+	// Calculate modal haplotype for the list.
+	modal := genetic.ModalHaplotype(persons)
+	modal.ID = c.SNPs[0]
+	modal.Name = c.SNPs[0]
+	modal.Label = c.SNPs[0]
+	c.Person = modal
+}
+
+func (c *Clade) CalculateDistances(mutationRates genetic.YstrMarkers, distance genetic.DistanceFunc) {
+	if c.Person == nil {
+		return
+	}
+	// Calculate genetic distances between modal haplotype
+	// and samples or subclades.
+	for i, _ := range c.Samples {
+		if c.Samples[i].Person != nil {
+			ystr1 := c.Samples[i].Person.YstrMarkers
+			ystr2 := c.Person.YstrMarkers
+			c.Samples[i].STRCount = distance(ystr1, ystr2, mutationRates)
+		}
+	}
+	for i, _ := range c.Subclades {
+		c.Subclades[i].CalculateDistances(mutationRates, distance)
+		if c.Subclades[i].Person != nil {
+			ystr1 := c.Subclades[i].Person.YstrMarkers
+			ystr2 := c.Person.YstrMarkers
+			c.Subclades[i].STRCount = distance(ystr1, ystr2, mutationRates)
+		}
+	}
+}
+
 // CalculateAge calculates the age and TMRCA for this Clade.
 // It fills the following variables insise Clade:
 // TMRCA_STR, AgeSTR, STRCountDownstream.
+// gentime is the generation time in years.
 // calibration is a calibration factor that is multiplied
-// by the number of STR mutations to get results in years.
-func (c *Clade) CalculateAge(calibration float64) {
+// to the result.
+func (c *Clade) CalculateAge(gentime, calibration float64) {
+	var cal = gentime * calibration
 	var nChilds float64 = 0
 	var count float64 = 0
 	// Count STR mutations for samples.
@@ -152,7 +230,7 @@ func (c *Clade) CalculateAge(calibration float64) {
 	}
 	// Count STR mutations for subclades.
 	for i, _ := range c.Subclades {
-		c.Subclades[i].CalculateAge(calibration)
+		c.Subclades[i].CalculateAge(gentime, cal)
 		subcladeSTRs := c.Subclades[i].STRCount + c.Subclades[i].STRCountDownstream
 		if subcladeSTRs > 0 {
 			count += subcladeSTRs
@@ -162,9 +240,9 @@ func (c *Clade) CalculateAge(calibration float64) {
 	// Calculate average number of mutations.
 	if nChilds > 0 {
 		c.STRCountDownstream = count / nChilds
-		c.TMRCA_STR = c.STRCountDownstream * calibration
+		c.TMRCA_STR = c.STRCountDownstream * cal
 	}
-	c.AgeSTR = (c.STRCount + c.STRCountDownstream) * calibration
+	c.AgeSTR = (c.STRCount + c.STRCountDownstream) * cal
 }
 
 func (c *Clade) String() string {
@@ -311,7 +389,7 @@ func stripComments(line string) string {
 	// Check if line contains only whitespaces.
 	isEmpty := true
 	for _, c := range result {
-		if unicode.IsSpace(c) != false {
+		if unicode.IsSpace(c) == false {
 			isEmpty = false
 			break
 		}
