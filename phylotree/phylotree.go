@@ -16,7 +16,8 @@ import (
 
 // Element is a node or a leaf of the tree.
 type Element struct {
-	SNPs     []string
+	SNPs []string
+	// STRCount is the number of unique STR mutations for this element.
 	STRCount float64
 	// Person may be a real person from sample data
 	// or a virtual ancestor (modal haplotype).
@@ -188,6 +189,8 @@ func (c *Clade) CalculateModalHaplotypes() {
 	c.Person = modal
 }
 
+// CalculateDistances calculated the genetic distances between
+// the modal haplotype of this clade and it's downstream members.
 func (c *Clade) CalculateDistances(mutationRates genetic.YstrMarkers, distance genetic.DistanceFunc) {
 	if c.Person == nil {
 		return
@@ -218,7 +221,6 @@ func (c *Clade) CalculateDistances(mutationRates genetic.YstrMarkers, distance g
 // calibration is a calibration factor that is multiplied
 // to the result.
 func (c *Clade) CalculateAge(gentime, calibration float64) {
-	var cal = gentime * calibration
 	var nChilds float64 = 0
 	var count float64 = 0
 	// Count STR mutations for samples.
@@ -230,7 +232,7 @@ func (c *Clade) CalculateAge(gentime, calibration float64) {
 	}
 	// Count STR mutations for subclades.
 	for i, _ := range c.Subclades {
-		c.Subclades[i].CalculateAge(gentime, cal)
+		c.Subclades[i].CalculateAge(gentime, calibration)
 		subcladeSTRs := c.Subclades[i].STRCount + c.Subclades[i].STRCountDownstream
 		if subcladeSTRs > 0 {
 			count += subcladeSTRs
@@ -240,9 +242,9 @@ func (c *Clade) CalculateAge(gentime, calibration float64) {
 	// Calculate average number of mutations.
 	if nChilds > 0 {
 		c.STRCountDownstream = count / nChilds
-		c.TMRCA_STR = c.STRCountDownstream * cal
+		c.TMRCA_STR = c.STRCountDownstream * gentime * calibration
 	}
-	c.AgeSTR = (c.STRCount + c.STRCountDownstream) * cal
+	c.AgeSTR = (c.STRCount + c.STRCountDownstream) * gentime * calibration
 }
 
 func (c *Clade) String() string {

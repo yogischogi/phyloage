@@ -24,7 +24,6 @@ func main() {
 		personsin = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
 		mrin      = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		gentime   = flag.Float64("gentime", 1, "Generation time in years.")
-		idcol     = flag.Int("idcol", 1, "Column number for IDs in CSV input file.")
 	)
 	flag.Parse()
 
@@ -67,7 +66,7 @@ func main() {
 		case fileInfo.IsDir():
 			persons, err = genfiles.ReadPersonsFromDir(*personsin)
 		case strings.HasSuffix(strings.ToLower(*personsin), ".csv"):
-			persons, err = genfiles.ReadPersonsFromCSV(*personsin, *idcol-1)
+			persons, err = genfiles.ReadPersonsFromCSV(*personsin, 0)
 		default:
 			persons, err = genfiles.ReadPersonsFromTXT(*personsin)
 		}
