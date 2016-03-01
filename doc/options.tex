@@ -1,0 +1,25 @@
+\section{Command Line Options}
+
+Command line options may be given in arbitrary order.
+
+\begin{description}
+\item[-help] Prints available program options.
+
+\item[-treein] Filename of the SNP based phylogenetic tree.
+\item[-treeout] Filename of the results tree in text format.
+\item[-personsin] Filename or directory of files containing the
+	persons' Y-STR values. If this is a single file it must contain
+	results for multiple persons. The input file format is CSV
+    (comma separated values) or text format.
+
+	If a directory is provided for input it must contain multiple
+	files in YFull format, each file containing the results for
+	a single person. The person's ID is extracted from the filename.
+
+	\emph{personsin} supports multiple file names separated by
+	commas.
+\item[-mrin] Filename of the mutation rates to use.
+\item[-gentime] Generation time.
+\item[-cal] Calibration factor.
+\end{description}
+

@@ -1,0 +1,65 @@
+\section{First example}
+
+\subsection{Input Tree}
+
+Before you can start you need to create a phylogenetic tree,
+that contains SNPs and the IDs of the genetic samples. The
+file format is text based and looks like this:
+
+\vspace{1em}
+\noindent
+// This is an example tree.\\
+// Comments begin with //.
+\vspace{1em}
+
+\noindent L51\\
+\hspace*{4ex}P310\\
+\hspace*{8ex}P311\\
+\hspace*{12ex}P312\\
+\hspace*{16ex}id:YF00009\\
+\hspace*{16ex}id:YF00301\\
+\hspace*{16ex}id:YF02016\\
+\hspace*{12ex}U106\\
+\hspace*{16ex}id:YF00815\\
+\hspace*{16ex}id:YF01234\\
+\hspace*{16ex}id:YF05678\\
+\hspace*{12ex}S1194\\
+\hspace*{16ex}CTS4528\\
+\hspace*{20ex}id:YF04242\\
+\hspace*{20ex}id:YF00101\\
+\hspace*{20ex}id:YF01010
+\vspace{1em}
+
+The tree is indented by using tabs. Each sample starts with
+\emph{id:} followed the ID. In our case these are typical
+YFull IDs but Phyloage supports Family Tree DNA data as well.
+Phyloage uses the Phylofriend \cite{Phylofriend} program for
+data import and many calculations as well. See the Phylofriend
+User Guide \cite{PhylofriendUserGuide} for the details of
+the supported input formats.
+
+You can safe the input tree as \emph{tree.txt}. Next you need to
+put the files containing the sample data into a directory for
+example \emph{allsamples}. Now you can invoke the program by
+
+\vspace{1em}
+\noindent
+\texttt{phyloage -treein tree.txt -treeout results.txt\\
+-personsin allsamples -mrin 111-average.txt -gentime 32}
+\vspace{1em}
+
+\noindent The results will be stored in a file named \emph{results.txt}.
+We have used average mutation rates for 111 markers and a
+generation time of 32 years.
+
+
+
+
+
+
+
+
+
+
+
+

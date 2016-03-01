@@ -12,5 +12,6 @@ family branches.
 
 ## Documentation
 
+* [User Guide](https://github.com/yogischogi/phyloage/blob/master/doc/phyloage.pdf?raw=true)
 * [Source Code](http://godoc.org/github.com/yogischogi/phyloage)
 
