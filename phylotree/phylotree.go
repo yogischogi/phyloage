@@ -297,7 +297,7 @@ type lineInfo struct {
 // in the text file.
 func parseTree(parent *Clade, indent int, lines []lineInfo) error {
 	for i, _ := range lines {
-		childIndent := lines[0].indent
+		childIndent := indent + 1
 		switch {
 		case lines[i].indent < childIndent:
 			// Return if indentation shows beginning of next block.
