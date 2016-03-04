@@ -9,51 +9,60 @@ Since the emergence of next generation sequencing SNP based
 phylogenetic trees are rapidly evolving and less attention
 is paid to Y-STR mutations. But if we look at the properties
 of SNP mutations in detail, we see that they are not without
-drawbacks.
+drawbacks:
 
 \begin{itemize}
 \item SNP mutations are extremely stable. Phylogenetic trees
 	based on SNPs are highly reliable.
-\item Not all SNPs are useful for genealogical purposes. This
-	is problematic for TMRCA calculations because wrong SNPs
-	lead to false results.
+\item Not all SNPs are useful for genealogical purposes
+	\cite{YFullMutationRate}. This is problematic for TMRCA
+	calculations because wrong SNPs lead to false results.
 \item For TMRCA calculations the margins of error are rather large.
 	YFull has tried to include only genealgical relevant SNPs
 	into their phylogenetic tree \cite{YFullTree} and estimates
 	one mutation every 140 years \cite{YFullMutationRate}.
 \end{itemize}
 
-What we want is more precise estimates. This could be achieved
-by using another kind of mutation, the well known Y-STRs. Their
-properties are rather different from SNPs.
+It would be nice to have more precise estimates and a second
+independent method for TMRCA calculations, that can be used to
+verify and complement the results gained by SNP counting.
+This could be achieved by using the well known Y-STR mutations.
+Their properties are rather different from SNPs:
 
 \begin{itemize}
 \item STRs have been used for genetic genealogy for a long
 	time. Some specific marker sets are well known and many
 	people have tested.
+\item Next generation sequencing reveals results for up to
+	500 markers. This should give us enhanced precision for
+	TMRCA estimates.
+\item Time estimates using STRs are often biased towards
+	specific lineages that proliferated more than others.
 \item STRs mutate back and forth. It is impossible to create
 	reliable phylogenetic trees that go back deep into
 	history. Furthermore the back and forth mutations lead
 	to a saturation effect that invalidates time estimates
 	for long time spans (thousands of years).
-\item Next generation sequencing reveals results for up to
-	500 markers. This should give us enhanced precision for
-	TMRCA estimates.
 \end{itemize}
 
-So what does Phyloage do? The basic idea is to start with an
-SNP based phylogenetic tree, insert the Y-STR results and
-calculate modal haplotypes for each node of the tree. 
+There have been numerous efforts to overcome the disadvantages
+of STR counting. A small overview is given in \cite{Ham15}.
+
+Phyloage introduces a new approach. The basic idea is to
+start with an SNP based phylogenetic tree, insert the Y-STR
+results and calculate modal haplotypes for each node of the
+tree. 
 
 In theory this should reduce saturation effects and give
 better time estimates for both deep history and genealogical
 time frames.
 
 If you use this program, please remember that it is still
-highly experimental. At the time I am writing this, there
-is no person on earth who has a long time experience with
-500 Y-STR markers.
+highly experimental. At the time I am writing this (March 1,
+2016), there is no person on earth who has a long time
+experience with 500 Y-STR markers.
 
+\vspace{1em}\noindent
 Have fun experimenting!
 
 \vspace{1em} Dirk

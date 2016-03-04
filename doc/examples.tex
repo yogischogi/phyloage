@@ -1,0 +1,97 @@
+\section{Examples}
+
+\subsection{Using YFull Results}
+
+\subsubsection*{SNP Input Tree}
+
+Before you can start you need to create a phylogenetic tree,
+that contains SNPs and the IDs of the genetic samples. The
+file format is text based and looks like this:
+
+\begin{verbatim}
+// This is an example tree.
+// Comments begin with //.
+
+CTS4528, S1200
+    S11481
+        id:YF01234
+        id:YF00301
+        id:YF02016
+    S14328
+        id:YF04242
+        id:YF00101
+        id:YF01010
+\end{verbatim}
+
+Each line of the tree contains one or more SNPs or a sample
+ID. Subclades and samples are indented by using tabs. Each
+sample starts with \emph{id:} followed by the ID. In our case
+these are typical YFull IDs but Phyloage supports Family Tree
+DNA data as well. Phyloage uses the Phylofriend
+\cite{Phylofriend} program for data import and many
+calculations as well. See the Phylofriend User Guide
+\cite{PhylofriendUserGuide} for the details of the supported
+input formats.
+
+To create a results tree:
+
+\begin{enumerate}
+\item Save the input tree to a file, for example \emph{tree.txt}.
+\item Download the Y-STR results for the samples from YFull
+	and put them into a separate directory, for example
+	\emph{allsamples}
+\item Execute the following command from a command line:\\
+\texttt{phyloage -treein tree.txt -treeout results.txt\\
+-personsin allsamples -mrin 111-average.txt -gentime 32}
+\end{enumerate}
+
+The results will be stored in a file named \emph{results.txt}.
+We have used average mutation rates for 111 markers and a
+generation time of 32 years.
+
+
+\subsubsection*{Results Tree}
+
+Now the file \emph{results.txt} contains a tree with TMRCA
+estimates that looks like this:
+
+\begin{verbatim}
+CTS4528, S1200, STRs Downstream: 145, formed: 4644, TMRCA: 4644
+    S11481, STR-Count: 140, STRs Downstream: 51, formed: 6141, TMRCA: 1647
+        id:YF01234, STR-Count: 30
+        id:YF00301, STR-Count: 73
+        id:YF02016, STR-Count: 52
+    S14328, STR-Count: 17, STRs Downstream: 81, formed: 3148, TMRCA: 2597
+        id:YF04242, STR-Count: 72
+        id:YF00101, STR-Count: 91
+        id:YF01010, STR-Count: 82
+\end{verbatim}
+
+Because we have used mutation rates for 111 markers, that
+were calibrated by using generations, the \emph{STR count}
+is given in generations. It says for how long a Clade has
+existed before it developed any subclades. The
+\emph{STRs Downstream} is a measure for the TMRCA.
+
+\emph{formed} denotes the age of the clade in years. It is
+calculated by adding \emph{STR count} to \emph{STRs Downstream}
+and multiplying the result by the generation time (the
+\emph{gentime} parameter) and an additional calibration
+factor (1 by default).
+
+\emph{TMRCA} is the same as \emph{STRs Downstream}. It is
+just multiplied by the generation time and the calibration
+factor.
+
+
+% \subsection{Using Family Tree DNA Results}
+
+% \subsection{Pure Mutation Counting}
+
+
+
+
+
+
+
+
