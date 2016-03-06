@@ -4,4 +4,7 @@
 \contentsline {section}{\numberline {3}Command Line Options}{6}{section.3}
 \contentsline {section}{\numberline {4}Examples}{7}{section.4}
 \contentsline {subsection}{\numberline {4.1}Using YFull Results}{7}{subsection.4.1}
-\contentsline {section}{References}{9}{section*.4}
+\contentsline {subsection}{\numberline {4.2}Mutation Counting on the 500 Marker Scale}{8}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Adding Family Tree DNA Results}{9}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}Pure Mutation Counting}{10}{subsection.4.4}
+\contentsline {section}{References}{11}{section*.4}

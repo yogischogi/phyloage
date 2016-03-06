@@ -38,9 +38,12 @@ To create a results tree:
 \begin{enumerate}
 \item Save the input tree to a file, for example \emph{tree.txt}.
 \item Download the Y-STR results for the samples from YFull
-	and put them into a separate directory, for example
-	\emph{allsamples}
-\item Execute the following command from a command line:\\
+    and put them into a separate directory, for example
+    \emph{allsamples}
+\item Execute the following command from a command line
+    (the file \emph{111-average.txt} can be found in the
+    \emph{mutationrates} directory of the Phylofriend program
+    \cite{Phylofriend}):\\
 \texttt{phyloage -treein tree.txt -treeout results.txt\\
 -personsin allsamples -mrin 111-average.txt -gentime 32}
 \end{enumerate}
@@ -84,11 +87,129 @@ just multiplied by the generation time and the calibration
 factor.
 
 
-% \subsection{Using Family Tree DNA Results}
+\subsection{Mutation Counting on the 500 Marker Scale}
 
-% \subsection{Pure Mutation Counting}
+In the previous example we have used the average mutation rates
+for 111 markers. It is a good idea to start with those markers
+because they are well known and have been used for years.
+
+YFull on the other hand reports up to 500 STR markers. Most persons
+get about 400 values out of their Big Y test. So we like to use
+them, but keep in mind that we do not have a long time experience
+with the 500 marker scale.
+
+The input tree will be exactly the same as before but this time
+we execute the command:
+
+\vspace{1ex}\noindent
+\texttt{phyloage -treein tree.txt -treeout results.txt\\
+-personsin=allsample -mrin=500-count.txt -cal=39 }
+\vspace{1ex}
+
+\noindent The above command will do mutation counting using
+all markers available and then upscale the results to 500
+markers. The \emph{500-count.txt} contains the mutation rates
+for marker counting. It can be found in the Phylofriend
+\cite{Phylofriend} \emph{mutationrates} directory.
+
+Currently it seems like one mutation counts as 39 years
+using Phylofriend's mutation model. So a calibration factor
+of 39 is used.
 
 
+\subsection{Adding Family Tree DNA Results}
+
+It is possible to add Family Tree DNA results to the input
+tree. This is very useful if some persons only did test on
+the 67 or 111 marker scale. It is also possible to add 12 or
+37 marker results but the average mutation rates are different
+and the margins of error are very high. So I do not recommend
+it.
+
+To add Family Tree DNA results, just insert their IDs
+(kit numbers) into the input tree. In this example we add
+12345 and 67890 to the input tree:
+
+\begin{verbatim}
+CTS4528, S1200
+    S11481
+        id:YF01234
+        id:YF00301
+        id:YF02016
+        id:12345
+        id:67890
+    S14328
+        id:YF04242
+        id:YF00101
+        id:YF01010
+\end{verbatim}
+
+To create the results tree:
+
+\begin{enumerate}
+\item Save the input tree to the file \emph{tree.txt}.
+\item Put the YFull results into a directory named
+	\emph{yfull}.
+\item Save the Family Tree DNA results in a spreadsheet
+	called \emph{cts4528.csv}. The first column of the 
+	spreadsheet must contain the Family Tree DNA kit numbers.
+	For additional details about the file format, please
+	consult the Phylofriend User Guide \cite{PhylofriendUserGuide}.
+\item Execute the following command from a command line:\\
+	\texttt{phyloage -treein tree.txt -treeout results.txt\\
+	-personsin yfull,cts4528.csv -mrin 111-average.txt\\
+	-gentime 32}
+\end{enumerate}
+
+The results can be found in the file \emph{results.txt}.
+Of course it is also possible to build a tree only from
+Family Tree DNA samples and completely leave out YFull
+results.
+
+
+\subsection{Pure Mutation Counting}
+
+If you do not have files containing detailed genetic results,
+but you know the number of the individual (private) STR
+mutations, it is possible to use the input tree for counting.
+Just add the STR numbers to the tree like this (you can also
+use this method for SNP counting):
+
+\begin{verbatim}
+CTS4528, S1200
+    S11481, STR-Count: 2
+        id:YF01234, STR-Count: 30
+        id:YF00301, STR-Count: 40
+        id:YF02016, STR-Count: 50
+    S14328, STR-Count: 2
+        id:YF04242, STR-Count: 30
+        id:YF00101, STR-Count: 40
+        id:YF01010, STR-Count: 50
+\end{verbatim}
+
+
+In this example we assume that one mutation counts as 100
+years. Thus we use a calibration factor of 100. To create
+the result tree, type:
+
+\vspace{1ex}\noindent
+\texttt{phyloage -treein tree.txt -treeout results.txt -cal 100}
+\vspace{1ex}
+
+\noindent
+The result tree contains TMRCA estimates for all clades:
+
+\begin{verbatim}
+CTS4528, S1200, STRs Downstream: 42, formed: 4200, TMRCA: 4200
+    S11481, STR-Count: 2, STRs Downstream: 40, formed: 4200, TMRCA: 4000
+        id:YF01234, STR-Count: 30
+        id:YF00301, STR-Count: 40
+        id:YF02016, STR-Count: 50
+    S14328, STR-Count: 2, STRs Downstream: 40, formed: 4200, TMRCA: 4000
+        id:YF04242, STR-Count: 30
+        id:YF00101, STR-Count: 40
+        id:YF01010, STR-Count: 50
+\end{verbatim}
 
 
 
