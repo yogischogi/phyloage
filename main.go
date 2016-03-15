@@ -18,18 +18,22 @@ import (
 func main() {
 	// Command line flags.
 	var (
-		treein    = flag.String("treein", "", "Input filename for phylogenetic tree (.txt).")
-		treeout   = flag.String("treeout", "", "Output filename for phylogenetic tree in TXT format.")
-		cal       = flag.Float64("cal", 1, "Calibration factor for TMRCA calculation.")
-		personsin = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
-		mrin      = flag.String("mrin", "", "Filename for the import of mutation rates.")
-		gentime   = flag.Float64("gentime", 1, "Generation time in years.")
+		treein     = flag.String("treein", "", "Input filename for phylogenetic tree (.txt).")
+		treeout    = flag.String("treeout", "", "Output filename for phylogenetic tree in TXT format.")
+		cal        = flag.Float64("cal", 1, "Calibration factor for TMRCA calculation.")
+		personsin  = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
+		mrin       = flag.String("mrin", "", "Filename for the import of mutation rates.")
+		gentime    = flag.Float64("gentime", 1, "Generation time in years.")
+		inspect    = flag.String("inspect", "", "Comma separated list of SNP names to search for.")
+		statistics = flag.Bool("statistics", false, "Prints marker statistics.")
+		method     = flag.String("method", "parsimony", "Method to calculate modal haplotypes: phylofriend or parsimony.")
 	)
 	flag.Parse()
 
 	var (
 		persons       []*genetic.Person
 		mutationRates genetic.YstrMarkers
+		stat          *genetic.MarkerStatistics
 		err           error
 	)
 
@@ -80,7 +84,28 @@ func main() {
 			persons = append(persons, pers...)
 		}
 		tree.InsertPersons(persons)
-		tree.CalculateModalHaplotypes()
+
+		// Calculate marker statistics.
+		if *statistics == true || *method == "parsimony" {
+			stat = genetic.Statistics(persons)
+		}
+
+		// Print marker statistics.
+		if *statistics == true {
+			fmt.Print(stat.String())
+		}
+
+		// Calculate modal haplotypes.
+		switch *method {
+		case "phylofriend":
+			tree.CalculateModalHaplotypes()
+		case "parsimony":
+			tree.CalculateModalHaplotypesParsimony(stat)
+		default:
+			fmt.Printf("Error, unknown method %q to calculate modal haplotypes.\n", *method)
+			os.Exit(1)
+		}
+
 		tree.CalculateDistances(mutationRates, genetic.Distance)
 	}
 
@@ -110,5 +135,11 @@ func main() {
 		}
 	} else {
 		fmt.Printf("%v\n", tree)
+	}
+
+	// Search for SNPs and print out information about the matching subclades.
+	if *inspect != "" {
+		searchTerms := strings.Split(*inspect, ",")
+		fmt.Printf("%s", tree.Inspect(searchTerms))
 	}
 }

@@ -55,6 +55,30 @@ func (e *Element) AddSNP(name string) {
 	e.SNPs = append(e.SNPs, name)
 }
 
+// Contains checks if one of this element's SNPs
+// equals searchTerm.
+func (e *Element) Contains(searchTerm string) bool {
+	result := false
+	for _, snp := range e.SNPs {
+		if strings.ToLower(snp) == strings.ToLower(searchTerm) {
+			result = true
+			break
+		}
+	}
+	return result
+}
+
+// Details returns a detailed string representation of this element.
+func (e *Element) Details() string {
+	var buffer bytes.Buffer
+	buffer.WriteString(e.String())
+	buffer.WriteString("\n")
+	if e.Person != nil {
+		buffer.WriteString(e.Person.YstrMarkers.String())
+	}
+	return buffer.String()
+}
+
 func (e *Element) String() string {
 	var buffer bytes.Buffer
 	hasWritten := false
@@ -180,7 +204,6 @@ func (c *Clade) CalculateModalHaplotypes() {
 			persons = append(persons, c.Subclades[i].Person)
 		}
 	}
-
 	// Calculate modal haplotype for the list.
 	modal := genetic.ModalHaplotype(persons)
 	modal.ID = c.SNPs[0]
@@ -282,6 +305,51 @@ func (c *Clade) prettyPrint(buffer *bytes.Buffer, indent int) {
 	for _, clade := range c.Subclades {
 		clade.prettyPrint(buffer, indent+1)
 	}
+}
+
+// Inspect looks at this clade and all subclades.
+// If any of the tree nodes' SNPs match one of the search
+// terms, a string representation of the element is added
+// to the result.
+func (c *Clade) Inspect(searchTerms []string) string {
+	// Create hash map containing results.
+	results := make(map[string]string)
+	for _, term := range searchTerms {
+		results[term] = ""
+	}
+
+	results = c.searchFor(results)
+
+	// Return representation of the findings.
+	var buffer bytes.Buffer
+	for _, term := range searchTerms {
+		buffer.WriteString(results[term])
+	}
+	return buffer.String()
+}
+
+// searchFor searches for SNPs in this clade and it's subclades.
+// The SNPs are defined as keys in the results map.
+// The values of the results map are string representations of
+// the matching clades.
+func (c *Clade) searchFor(results map[string]string) map[string]string {
+	// Search for searchTerms.
+	for i, _ := range c.Samples {
+		for key, _ := range results {
+			if c.Samples[i].Contains(key) {
+				results[key] = c.Samples[i].Element.Details()
+			}
+		}
+	}
+	for i, _ := range c.Subclades {
+		for key, _ := range results {
+			if c.Subclades[i].Contains(key) {
+				results[key] = c.Subclades[i].Element.Details()
+			}
+		}
+		results = c.Subclades[i].searchFor(results)
+	}
+	return results
 }
 
 // lineInfo is a helper struct for parsing a tree in text format.
