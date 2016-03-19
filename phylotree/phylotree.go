@@ -14,6 +14,9 @@ import (
 	"github.com/yogischogi/phylofriend/genetic"
 )
 
+// Uncertain is used for uncertain or unknown values.
+const Uncertain = -1
+
 // Element is a node or a leaf of the tree.
 type Element struct {
 	SNPs []string
@@ -21,37 +24,16 @@ type Element struct {
 	STRCount float64
 	// Person may be a real person from sample data
 	// or a virtual ancestor (modal haplotype).
+	// This may be nil.
 	Person *genetic.Person
 }
 
-// Sample represents the genetic sample of an individual.
-// This is a leaf of the phylogenetic tree.
-type Sample struct {
-	Element
-	// ID od this sample, usually the kit number.
-	ID string
-}
-
-// Clade models a haplogroup or subclade.
-// A clade represents a node of the phylogenetic tree.
-type Clade struct {
-	Element
-	Samples   []Sample
-	Subclades []Clade
-	// AgeSTR shows when this Clade has formed ybp
-	// according to a calculation using Y-STR mutations.
-	AgeSTR float64
-	// STRCountDownstream is the average number of downstream STR mutations.
-	STRCountDownstream float64
-	// TMRCA_STR is the time to the most recent common Ancestor
-	// for all downstream samples.
-	TMRCA_STR float64
+func newElement() Element {
+	snps := make([]string, 0)
+	return Element{SNPs: snps, STRCount: Uncertain}
 }
 
 func (e *Element) AddSNP(name string) {
-	if e.SNPs == nil {
-		e.SNPs = make([]string, 0)
-	}
 	e.SNPs = append(e.SNPs, name)
 }
 
@@ -93,7 +75,7 @@ func (e *Element) String() string {
 		hasWritten = true
 	}
 	// Write STR-Count.
-	if e.STRCount > 0 {
+	if e.STRCount >= 0 {
 		if hasWritten {
 			buffer.WriteString(fmt.Sprintf(", STR-Count: %.0f", e.STRCount))
 		} else {
@@ -101,6 +83,44 @@ func (e *Element) String() string {
 		}
 	}
 	return buffer.String()
+}
+
+// Sample represents the genetic sample of an individual.
+// This is a leaf of the phylogenetic tree.
+type Sample struct {
+	Element
+	// ID od this sample, usually the kit number.
+	ID string
+}
+
+func newSample() Sample {
+	return Sample{Element: newElement()}
+}
+
+// newSample creates a new Sample from a textual representation.
+// Format: id:SampleID, SNP1, SNP2, STR-Count: 11
+// Only the "id:" field is mandatory.
+func newSampleFromText(text string) (Sample, error) {
+	result := newSample()
+	tokens := strings.Split(text, ",")
+	for _, token := range tokens {
+		token = strings.TrimSpace(token)
+		switch {
+		case strings.HasPrefix(token, "id:"):
+			result.ID = strings.TrimSpace(token[3:])
+		case strings.HasPrefix(token, "STR-Count:"):
+			strCount := strings.TrimSpace(token[10:])
+			count, err := strconv.ParseFloat(strCount, 64)
+			if err != nil {
+				msg := fmt.Sprintf("could not convert STR-Count to float: %s", strCount)
+				return result, errors.New(msg)
+			}
+			result.STRCount = count
+		default:
+			result.AddSNP(token)
+		}
+	}
+	return result, nil
 }
 
 // Contains checks if one of this sample's SNPs or the ID
@@ -119,6 +139,50 @@ func (s *Sample) String() string {
 
 func (s *Sample) Details() string {
 	return fmt.Sprintf("id:%s, %s", s.ID, s.Element.Details())
+}
+
+// Clade models a haplogroup or subclade.
+// A clade represents a node of the phylogenetic tree.
+type Clade struct {
+	Element
+	Samples   []Sample
+	Subclades []Clade
+	// AgeSTR shows when this Clade has formed ybp
+	// according to a calculation using Y-STR mutations.
+	AgeSTR float64
+	// STRCountDownstream is the average number of downstream STR mutations.
+	STRCountDownstream float64
+	// TMRCA_STR is the time to the most recent common Ancestor
+	// for all downstream samples.
+	TMRCA_STR float64
+}
+
+// newClade creates a new Clade from a textual representation.
+// Format: SNP1, SNP2, STR-Count: 11
+// "STR-Count:" is optional.
+func newClade(text string) (Clade, error) {
+	result := Clade{
+		Element:            newElement(),
+		AgeSTR:             Uncertain,
+		STRCountDownstream: Uncertain,
+		TMRCA_STR:          Uncertain}
+	tokens := strings.Split(text, ",")
+	for _, token := range tokens {
+		token = strings.TrimSpace(token)
+		switch {
+		case strings.HasPrefix(token, "STR-Count:"):
+			strCount := strings.TrimSpace(token[10:])
+			count, err := strconv.ParseFloat(strCount, 64)
+			if err != nil {
+				msg := fmt.Sprintf("could not convert STR-Count to float: %s", strCount)
+				return result, errors.New(msg)
+			}
+			result.STRCount = count
+		default:
+			result.AddSNP(token)
+		}
+	}
+	return result, nil
 }
 
 // NewFromFile parses a text file to create a tree.
@@ -258,7 +322,7 @@ func (c *Clade) CalculateAge(gentime, calibration float64) {
 	var count float64 = 0
 	// Count STR mutations for samples.
 	for i, _ := range c.Samples {
-		if c.Samples[i].STRCount > 0 {
+		if c.Samples[i].STRCount >= 0 {
 			count += c.Samples[i].STRCount
 			nChilds++
 		}
@@ -267,7 +331,7 @@ func (c *Clade) CalculateAge(gentime, calibration float64) {
 	for i, _ := range c.Subclades {
 		c.Subclades[i].CalculateAge(gentime, calibration)
 		subcladeSTRs := c.Subclades[i].STRCount + c.Subclades[i].STRCountDownstream
-		if subcladeSTRs > 0 {
+		if subcladeSTRs >= 0 {
 			count += subcladeSTRs
 			nChilds++
 		}
@@ -296,9 +360,9 @@ func (c *Clade) prettyPrint(buffer *bytes.Buffer, indent int) {
 	buffer.WriteString(c.Element.String())
 
 	// Write time estimates.
-	if c.STRCountDownstream > 0 {
+	if c.STRCountDownstream >= 0 {
 		buffer.WriteString(
-			fmt.Sprintf(", STRs Downstream: %.f, formed: %.f, TMRCA: %.f",
+			fmt.Sprintf(", STRs Downstream: %.0f, formed: %.0f, TMRCA: %.0f",
 				c.STRCountDownstream, c.AgeSTR, c.TMRCA_STR))
 	}
 	buffer.WriteString("\n")
@@ -389,7 +453,7 @@ func parseTree(parent *Clade, indent int, lines []lineInfo) error {
 			// Parse child elements.
 			if strings.Contains(lines[i].text, "id:") {
 				// Child is Sample element.
-				sample, err := newSample(lines[i].text)
+				sample, err := newSampleFromText(lines[i].text)
 				if err != nil {
 					msg := fmt.Sprintf("line: %d, %s", lines[i].lineNo, err)
 					return errors.New(msg)
@@ -408,56 +472,6 @@ func parseTree(parent *Clade, indent int, lines []lineInfo) error {
 		}
 	}
 	return nil
-}
-
-// newClade creates a new Clade from a textual representation.
-// Format: SNP1, SNP2, STR-Count: 11
-// "STR-Count:" is optional.
-func newClade(text string) (Clade, error) {
-	var result Clade
-	tokens := strings.Split(text, ",")
-	for _, token := range tokens {
-		token = strings.TrimSpace(token)
-		switch {
-		case strings.HasPrefix(token, "STR-Count:"):
-			strCount := strings.TrimSpace(token[10:])
-			count, err := strconv.ParseFloat(strCount, 64)
-			if err != nil {
-				msg := fmt.Sprintf("could not convert STR-Count to float: %s", strCount)
-				return result, errors.New(msg)
-			}
-			result.STRCount = count
-		default:
-			result.AddSNP(token)
-		}
-	}
-	return result, nil
-}
-
-// newSample creates a new Sample from a textual representation.
-// Format: id:SampleID, SNP1, SNP2, STR-Count: 11
-// Only the "id:" field is mandatory.
-func newSample(text string) (Sample, error) {
-	var result Sample
-	tokens := strings.Split(text, ",")
-	for _, token := range tokens {
-		token = strings.TrimSpace(token)
-		switch {
-		case strings.HasPrefix(token, "id:"):
-			result.ID = strings.TrimSpace(token[3:])
-		case strings.HasPrefix(token, "STR-Count:"):
-			strCount := strings.TrimSpace(token[10:])
-			count, err := strconv.ParseFloat(strCount, 64)
-			if err != nil {
-				msg := fmt.Sprintf("could not convert STR-Count to float: %s", strCount)
-				return result, errors.New(msg)
-			}
-			result.STRCount = count
-		default:
-			result.AddSNP(token)
-		}
-	}
-	return result, nil
 }
 
 // stripComments removes comments from a line of text.

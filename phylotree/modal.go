@@ -6,9 +6,6 @@ import (
 	"github.com/yogischogi/phylofriend/genetic"
 )
 
-// Uncertain is used for uncertain mutational values.
-const Uncertain = -1
-
 // CalculateModalHaplotypesParsimony calculates all modal haplotypes
 // for this clade, using a method of maximum parsimony.
 //
