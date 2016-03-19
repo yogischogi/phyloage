@@ -27,6 +27,7 @@ func main() {
 		inspect    = flag.String("inspect", "", "Comma separated list of SNP names to search for.")
 		statistics = flag.Bool("statistics", false, "Prints marker statistics.")
 		method     = flag.String("method", "parsimony", "Method to calculate modal haplotypes: phylofriend or parsimony.")
+		stage      = flag.Int("stage", 3, "Processing stage for parsimony algorithm: 1, 2 or 3.")
 	)
 	flag.Parse()
 
@@ -100,7 +101,7 @@ func main() {
 		case "phylofriend":
 			tree.CalculateModalHaplotypes()
 		case "parsimony":
-			tree.CalculateModalHaplotypesParsimony(stat)
+			tree.CalculateModalHaplotypesParsimony(stat, *stage)
 		default:
 			fmt.Printf("Error, unknown method %q to calculate modal haplotypes.\n", *method)
 			os.Exit(1)

@@ -11,49 +11,109 @@ const Uncertain = -1
 
 // CalculateModalHaplotypesParsimony calculates all modal haplotypes
 // for this clade, using a method of maximum parsimony.
-func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStatistics) {
-	// Calculate average haplotypes using real numbers.
-	c.calculateAverageHaplotypes()
+//
+// Processing stages:
+//
+//  0: Return without doing anything.
+//
+//  1: Calculate average haplotypes using real numbers.
+//
+//  2: Mark results that do not have a nearest neighbor among
+//     real mutation values as Uncertain.
+//     This stage is only for visualization and debugging.
+//
+//  3: Replace uncertain values in the top node by using the
+//     nearest and smallest real mutation neighbor.
+//     Recalculate the tree top down to find values for previously
+//     uncertain values.
+func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStatistics, processingStage int) {
+	if processingStage < 1 {
+		return
+	}
+	if processingStage >= 1 {
+		// Calculate average haplotypes using real numbers.
+		c.calculateAverageHaplotypes()
+	}
+	if processingStage == 2 {
+		// Mark results that do not have a nearest neighbor among
+		// real mutation values as Uncertain.
+		// This stage is only for visualization and debugging.
+		c.constrainHaplotypes(statistics, false)
+	}
+	if processingStage >= 3 {
+		// Force a haplotype without uncertain values for the top node.
+		constrainHaplotype(c.Person, statistics, true)
 
-	// Constrain haplotypes to real world mutation values.
-	// Uncertain results are left as Uncertain.
-	c.constrainHaplotypes(statistics, false)
-
-	// Force a haplotype without uncertain values for the top node.
-	constrainHaplotype(c.Person, statistics, true)
-
-	// Recalculate values for uncertain values
-	// using child and parent haplotypes.
-	for i, _ := range c.Subclades {
-		c.Subclades[i].recalculateModalHaplotypes(c, statistics)
+		// Recalculate values for uncertain values
+		// using child and parent haplotypes.
+		for i, _ := range c.Subclades {
+			c.Subclades[i].recalculateModalHaplotypes(c, statistics)
+		}
 	}
 }
 
-// recalculateModalHaplotypes recalculates modal haplotypes that
-// contain uncertain values. It takes the average of the child
-// haplotypes and the parent haplotype. The result is mapped to
-// the closest set of real marker values.
-func (c *Clade) recalculateModalHaplotypes(parent *Clade, statistics *genetic.MarkerStatistics) {
-	// Create a list of haplotypes for calculation.
+// calculateAverageHaplotypes calculates the average haplotype for
+// this clade and all subclades.
+func (c *Clade) calculateAverageHaplotypes() {
+	// Create a list of haplotypes from samples and subclades.
 	persons := make([]*genetic.Person, 0)
-	for i, _ := range c.Subclades {
-		if c.Subclades[i].Person != nil {
-			persons = append(persons, c.Subclades[i].Person)
-		}
-	}
 	for i, _ := range c.Samples {
 		if c.Samples[i].Person != nil {
 			persons = append(persons, c.Samples[i].Person)
 		}
 	}
-	if parent != nil && parent.Person != nil {
-		persons = append(persons, parent.Person)
-	}
-	recalc := averageHaplotype(persons)
-	replaceUncertainValues(c.Person, recalc, statistics)
-
 	for i, _ := range c.Subclades {
-		c.Subclades[i].recalculateModalHaplotypes(c, statistics)
+		c.Subclades[i].calculateAverageHaplotypes()
+		if c.Subclades[i].Person != nil {
+			persons = append(persons, c.Subclades[i].Person)
+		}
+	}
+	// Calculate modal haplotype for the list.
+	modal := averageHaplotype(persons)
+	modal.ID = c.SNPs[0]
+	modal.Name = c.SNPs[0]
+	modal.Label = c.SNPs[0]
+	c.Person = modal
+}
+
+// averageHaplotype calculates the average haplotype for a group of persons.
+// This method works with real numbers and uses the average
+// value as the modal value, while values of real mutatations
+// can only be whole numbers.
+//
+// Criteria for the modal value of a mutation:
+//
+// 	1 value: return value, because the modal of a
+//		single haplotype is the haplotype itself.
+//
+//  >2 values: return the average of all values > 0.
+func averageHaplotype(persons []*genetic.Person) *genetic.Person {
+	modal := new(genetic.Person)
+	switch len(persons) {
+	case 0:
+		// Return set of empty values.
+		return modal
+	case 1:
+		// Return the person itself.
+		modal = persons[0]
+		return modal
+	default:
+		// Calculate modal value for each marker.
+		for marker := 0; marker < len(persons[0].YstrMarkers); marker++ {
+			count := 0.0
+			sum := 0.0
+			for _, person := range persons {
+				value := person.YstrMarkers[marker]
+				if value > 0 {
+					sum += value
+					count++
+				}
+			}
+			if count > 0 {
+				modal.YstrMarkers[marker] = sum / count
+			}
+		}
+		return modal
 	}
 }
 
@@ -65,6 +125,9 @@ func (c *Clade) recalculateModalHaplotypes(parent *Clade, statistics *genetic.Ma
 func (c *Clade) constrainHaplotypes(statistics *genetic.MarkerStatistics, forceResult bool) {
 	// Create a list of modal haplotypes.
 	persons := make([]*genetic.Person, 0)
+	if c.Person != nil {
+		persons = append(persons, c.Person)
+	}
 	for i, _ := range c.Subclades {
 		c.Subclades[i].constrainHaplotypes(statistics, forceResult)
 		if c.Subclades[i].Person != nil {
@@ -142,79 +205,43 @@ func closestKey(target float64, mutations map[float64]int) (closest float64, isU
 	}
 }
 
-// replaceUncertainValues replaces all uncertain marker values in target
-// with values from source. The result is mapped to the closest real
-// world marker values using the marker statistics.
-func replaceUncertainValues(target, source *genetic.Person, statistics *genetic.MarkerStatistics) {
-	for i, _ := range target.YstrMarkers {
-		if target.YstrMarkers[i] == Uncertain {
-			value, _ := closestKey(source.YstrMarkers[i], statistics[i])
-			target.YstrMarkers[i] = value
+// recalculateModalHaplotypes recalculates modal haplotypes that
+// contain uncertain values. It takes the average of the child
+// haplotypes and the parent haplotype. The result is mapped to
+// the closest set of real marker values.
+func (c *Clade) recalculateModalHaplotypes(parent *Clade, statistics *genetic.MarkerStatistics) {
+	// Create a list of haplotypes for calculation.
+	persons := make([]*genetic.Person, 0)
+	if parent != nil && parent.Person != nil {
+		persons = append(persons, parent.Person)
+	}
+	for i, _ := range c.Subclades {
+		if c.Subclades[i].Person != nil {
+			persons = append(persons, c.Subclades[i].Person)
 		}
 	}
-}
-
-// calculateAverageHaplotypes calculates the average haplotype for
-// this clade and all subclades.
-func (c *Clade) calculateAverageHaplotypes() {
-	// Create a list of haplotypes from samples and subclades.
-	persons := make([]*genetic.Person, 0)
 	for i, _ := range c.Samples {
 		if c.Samples[i].Person != nil {
 			persons = append(persons, c.Samples[i].Person)
 		}
 	}
+	recalc := averageHaplotype(persons)
+	replaceUncertainValues(c.Person, recalc, statistics)
+
 	for i, _ := range c.Subclades {
-		c.Subclades[i].calculateAverageHaplotypes()
-		if c.Subclades[i].Person != nil {
-			persons = append(persons, c.Subclades[i].Person)
-		}
+		c.Subclades[i].recalculateModalHaplotypes(c, statistics)
 	}
-	// Calculate modal haplotype for the list.
-	modal := averageHaplotype(persons)
-	modal.ID = c.SNPs[0]
-	modal.Name = c.SNPs[0]
-	modal.Label = c.SNPs[0]
-	c.Person = modal
 }
 
-// averageHaplotype calculates the average haplotype for a group of persons.
-// This method works with real numbers and uses the average
-// value as the modal value, while values of real mutatations
-// can only be whole numbers.
-//
-// Criteria for the modal value of a mutation:
-//
-// 	1 value: return value, because the modal of a
-//		single haplotype is the haplotype itself.
-//
-//  >2 values: return the average of all values > 0.
-func averageHaplotype(persons []*genetic.Person) *genetic.Person {
-	modal := new(genetic.Person)
-	switch len(persons) {
-	case 0:
-		// Return set of empty values.
-		return modal
-	case 1:
-		// Return the person itself.
-		modal = persons[0]
-		return modal
-	default:
-		// Calculate modal value for each marker.
-		for marker := 0; marker < len(persons[0].YstrMarkers); marker++ {
-			count := 0.0
-			sum := 0.0
-			for _, person := range persons {
-				value := person.YstrMarkers[marker]
-				if value > 0 {
-					sum += value
-					count++
-				}
-			}
-			if count > 0 {
-				modal.YstrMarkers[marker] = sum / count
-			}
+// replaceUncertainValues replaces all uncertain marker values in target
+// with values from source. The result is mapped to the closest real
+// world marker values using the marker statistics.
+func replaceUncertainValues(target, source *genetic.Person, statistics *genetic.MarkerStatistics) {
+	for i, _ := range target.YstrMarkers {
+		_, isUnique := closestKey(target.YstrMarkers[i], statistics[i])
+		if isUnique == false {
+			newValue, _ := closestKey(source.YstrMarkers[i], statistics[i])
+			target.YstrMarkers[i] = newValue
 		}
-		return modal
 	}
 }

@@ -103,12 +103,22 @@ func (e *Element) String() string {
 	return buffer.String()
 }
 
+// Contains checks if one of this sample's SNPs or the ID
+// equals searchTerm.
+func (s *Sample) Contains(searchTerm string) bool {
+	return s.Element.Contains(searchTerm) || strings.ToLower(searchTerm) == strings.ToLower(s.ID)
+}
+
 func (s *Sample) String() string {
 	if s.Element.String() != "" {
 		return fmt.Sprintf("id:%s, %s", s.ID, s.Element.String())
 	} else {
 		return fmt.Sprintf("id:%s", s.ID)
 	}
+}
+
+func (s *Sample) Details() string {
+	return fmt.Sprintf("id:%s, %s", s.ID, s.Element.Details())
 }
 
 // NewFromFile parses a text file to create a tree.
@@ -334,10 +344,15 @@ func (c *Clade) Inspect(searchTerms []string) string {
 // the matching clades.
 func (c *Clade) searchFor(results map[string]string) map[string]string {
 	// Search for searchTerms.
+	for key, _ := range results {
+		if c.Contains(key) {
+			results[key] = c.Details()
+		}
+	}
 	for i, _ := range c.Samples {
 		for key, _ := range results {
 			if c.Samples[i].Contains(key) {
-				results[key] = c.Samples[i].Element.Details()
+				results[key] = c.Samples[i].Details()
 			}
 		}
 	}
