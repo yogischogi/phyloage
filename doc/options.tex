@@ -1,6 +1,9 @@
 \section{Command Line Options}
 
 Command line options may be given in arbitrary order.
+Parameters may be specified using a space or equals sign,
+for example the following options are identical:
+\texttt{-treein=mytree}, \texttt{-treein mytree}.
 
 \begin{description}
 \item[-help] Prints available program options.
@@ -16,10 +19,26 @@ Command line options may be given in arbitrary order.
 	files in YFull format, each file containing the results for
 	a single person. The person's ID is extracted from the filename.
 
-	\emph{personsin} supports multiple file names separated by
+	\texttt{personsin} supports multiple file names separated by
 	commas.
 \item[-mrin] Filename of the mutation rates to use.
 \item[-gentime] Generation time.
 \item[-cal] Calibration factor.
+\item[-statistics] Prints out marker statistics.
+\item[-inspect] Prints out details about the specified SNPs or
+	sample IDs. The search terms must be specified by a comma
+	separated list, for example \texttt{-inspect=CTS4528,S11481,S14328}.
+\item[-method] Method to be used for calculating modal haplotypes:
+	\texttt{phylofriend} or \texttt{parsimony}. The default method
+	is \texttt{parsimony}, which uses a maximum parsimony algorithm.
+\item[-stage] Processing stage for the parsimony algorithm. This
+	should be used for debugging or to see in detail what the algorithm
+	does. The following stages are valid:
+	\begin{description}
+	\item[1] Calculates average haplotypes using real numbers.
+	\item[2] Replaces real numbers by real world mutation values
+		and sets all uncertain values to -1.
+	\item[3] Forces all values to real world mutation values.
+	\end{description}
 \end{description}
 
