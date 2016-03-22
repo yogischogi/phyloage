@@ -141,7 +141,7 @@ func (c *Clade) constrainHaplotypes(statistics *genetic.MarkerStatistics, forceR
 // closest real world marker values from the marker statistics.
 func constrainHaplotype(person *genetic.Person, statistics *genetic.MarkerStatistics, forceResult bool) {
 	for i, _ := range person.YstrMarkers {
-		closest, isUnique := closestKey(person.YstrMarkers[i], statistics[i])
+		closest, isUnique := closestKey(person.YstrMarkers[i], statistics.Markers[i].ValuesOccurrences)
 		switch {
 		case isUnique || forceResult:
 			person.YstrMarkers[i] = closest
@@ -235,9 +235,9 @@ func (c *Clade) recalculateModalHaplotypes(parent *Clade, statistics *genetic.Ma
 // world marker values using the marker statistics.
 func replaceUncertainValues(target, source *genetic.Person, statistics *genetic.MarkerStatistics) {
 	for i, _ := range target.YstrMarkers {
-		_, isUnique := closestKey(target.YstrMarkers[i], statistics[i])
+		_, isUnique := closestKey(target.YstrMarkers[i], statistics.Markers[i].ValuesOccurrences)
 		if isUnique == false {
-			newValue, _ := closestKey(source.YstrMarkers[i], statistics[i])
+			newValue, _ := closestKey(source.YstrMarkers[i], statistics.Markers[i].ValuesOccurrences)
 			target.YstrMarkers[i] = newValue
 		}
 	}

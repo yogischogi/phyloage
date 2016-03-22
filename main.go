@@ -88,12 +88,15 @@ func main() {
 
 		// Calculate marker statistics.
 		if *statistics == true || *method == "parsimony" {
-			stat = genetic.Statistics(persons)
+			stat = genetic.NewStatistics(persons)
 		}
 
 		// Print marker statistics.
 		if *statistics == true {
 			fmt.Print(stat.String())
+
+			// XXX Temporary code.
+			// WriteToFile(stat)
 		}
 
 		// Calculate modal haplotypes.
@@ -142,5 +145,19 @@ func main() {
 	if *inspect != "" {
 		searchTerms := strings.Split(*inspect, ",")
 		fmt.Printf("%s", tree.Inspect(searchTerms))
+	}
+}
+
+// XXX Temporary method to determine stable marker set.
+func WriteToFile(statistics *genetic.MarkerStatistics) {
+	filename := "mutrates.txt"
+	minFreq := 1.0
+	nValuesMin := 2
+	nValuesMax := 4
+	stats := statistics.Select(minFreq, nValuesMin, nValuesMax)
+	err := ioutil.WriteFile(filename, []byte(stats.MutationRates()), os.ModePerm)
+	if err != nil {
+		fmt.Printf("Error writing mutation rates to file, %v.\n", err)
+		os.Exit(1)
 	}
 }
