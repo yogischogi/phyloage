@@ -294,6 +294,7 @@ func (c *Clade) CalculateDistances(mutationRates genetic.YstrMarkers, distance g
 	}
 	// Calculate genetic distances between modal haplotype
 	// and samples or subclades.
+	c.STRCount = 0
 	for i, _ := range c.Samples {
 		if c.Samples[i].Person != nil {
 			ystr1 := c.Samples[i].Person.YstrMarkers
