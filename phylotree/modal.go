@@ -6,6 +6,22 @@ import (
 	"github.com/yogischogi/phylofriend/genetic"
 )
 
+// resultOption specifies how float values should be mapped
+// to marker values.
+type mappingOption int
+
+const (
+	// mapAll maps all values to real world marker values.
+	mapAll = iota
+	// mapCertain maps only values to real word marker values,
+	// if the original value has a clearly defined nearest neighbor
+	// among the real world marker values.
+	mapCertain
+	// markUncertain maps values with a clearly defined nearest neighbor
+	// to real world marker values and marks unclear values as -1.
+	markUncertain
+)
+
 // CalculateModalHaplotypesParsimony calculates all modal haplotypes
 // for this clade, using a method of maximum parsimony.
 //
@@ -35,11 +51,14 @@ func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStat
 		// Mark results that do not have a nearest neighbor among
 		// real mutation values as Uncertain.
 		// This stage is only for visualization and debugging.
-		c.constrainHaplotypes(statistics, false)
+		c.constrainHaplotypes(statistics, markUncertain)
 	}
 	if processingStage >= 3 {
+		// Map all markers with certain nearest neighbors to real world marker values.
+		c.constrainHaplotypes(statistics, mapCertain)
+
 		// Force a haplotype without uncertain values for the top node.
-		constrainHaplotype(c.Person, statistics, true)
+		constrainHaplotype(c.Person, statistics, mapAll)
 
 		// Recalculate values for uncertain values
 		// using child and parent haplotypes.
@@ -116,37 +135,36 @@ func averageHaplotype(persons []*genetic.Person) *genetic.Person {
 
 // constrainHaplotypes maps calculated marker values to real
 // world marker values using the marker statistics.
-// If forceResult == true, all values are mapped to some real marker.
-// If forceReslut == false, markers that do not have a real world
-// closest neighbor are left Uncertain.
-func (c *Clade) constrainHaplotypes(statistics *genetic.MarkerStatistics, forceResult bool) {
+func (c *Clade) constrainHaplotypes(statistics *genetic.MarkerStatistics, mapping mappingOption) {
 	// Create a list of modal haplotypes.
 	persons := make([]*genetic.Person, 0)
 	if c.Person != nil {
 		persons = append(persons, c.Person)
 	}
 	for i, _ := range c.Subclades {
-		c.Subclades[i].constrainHaplotypes(statistics, forceResult)
+		c.Subclades[i].constrainHaplotypes(statistics, mapping)
 		if c.Subclades[i].Person != nil {
 			persons = append(persons, c.Subclades[i].Person)
 		}
 	}
 	// Contrain haplotypes to real world values.
 	for i, _ := range persons {
-		constrainHaplotype(persons[i], statistics, forceResult)
+		constrainHaplotype(persons[i], statistics, mapping)
 	}
 }
 
 // constrainHaplotype mappes the marker values of person to the
 // closest real world marker values from the marker statistics.
-func constrainHaplotype(person *genetic.Person, statistics *genetic.MarkerStatistics, forceResult bool) {
+func constrainHaplotype(person *genetic.Person, statistics *genetic.MarkerStatistics, mapping mappingOption) {
 	for i, _ := range person.YstrMarkers {
 		closest, isUnique := closestKey(person.YstrMarkers[i], statistics.Markers[i].ValuesOccurrences)
 		switch {
-		case isUnique || forceResult:
+		case isUnique || mapping == mapAll:
 			person.YstrMarkers[i] = closest
-		default:
+		case !isUnique && mapping == markUncertain:
 			person.YstrMarkers[i] = Uncertain
+		default:
+			// Do nothing.
 		}
 	}
 }

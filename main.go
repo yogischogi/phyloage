@@ -28,6 +28,7 @@ func main() {
 		statistics = flag.Bool("statistics", false, "Prints marker statistics.")
 		method     = flag.String("method", "parsimony", "Method to calculate modal haplotypes: phylofriend or parsimony.")
 		stage      = flag.Int("stage", 3, "Processing stage for parsimony algorithm: 1, 2 or 3.")
+		trace      = flag.String("trace", "", "Comma separated list of STR names to print out trace information.")
 	)
 	flag.Parse()
 
@@ -141,6 +142,12 @@ func main() {
 		fmt.Printf("%v\n", tree)
 	}
 
+	// Print tree with values of specified STRs.
+	if *trace != "" {
+		snps := strings.Split(*trace, ",")
+		fmt.Printf("%s", tree.Trace(snps))
+	}
+
 	// Search for SNPs and print out information about the matching subclades.
 	if *inspect != "" {
 		searchTerms := strings.Split(*inspect, ",")
@@ -153,7 +160,7 @@ func WriteToFile(statistics *genetic.MarkerStatistics) {
 	filename := "mutrates.txt"
 	minFreq := 1.0
 	nValuesMin := 2
-	nValuesMax := 4
+	nValuesMax := 3
 	stats := statistics.Select(minFreq, nValuesMin, nValuesMax)
 	err := ioutil.WriteFile(filename, []byte(stats.MutationRates()), os.ModePerm)
 	if err != nil {

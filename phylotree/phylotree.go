@@ -85,6 +85,20 @@ func (e *Element) String() string {
 	return buffer.String()
 }
 
+// strDetails returns a textual representation (names and values)
+// of the Y-STR markers specified by indices.
+func (e *Element) strDetails(indices []int) string {
+	var buffer bytes.Buffer
+	for _, i := range indices {
+		if e.Person != nil {
+			name := genetic.YstrMarkerTable[i].InternalName
+			value := e.Person.YstrMarkers[i]
+			buffer.WriteString(fmt.Sprintf(" %s: %g,", name, value))
+		}
+	}
+	return buffer.String()
+}
+
 // Sample represents the genetic sample of an individual.
 // This is a leaf of the phylogenetic tree.
 type Sample struct {
@@ -430,6 +444,56 @@ func (c *Clade) searchFor(results map[string]string) map[string]string {
 		results = c.Subclades[i].searchFor(results)
 	}
 	return results
+}
+
+// Trace returns a nicely formatted tree containing information
+// (names and values) about the Y-STR markers specified by STRs.
+func (c *Clade) Trace(STRs []string) string {
+	// Look for STR indices.
+	var indices []int
+	for _, str := range STRs {
+		str := strings.ToLower(str)
+		for _, marker := range genetic.YstrMarkerTable {
+			if str == strings.ToLower(marker.InternalName) ||
+				str == strings.ToLower(marker.FTDNAName) ||
+				str == strings.ToLower(marker.YFullName) {
+				indices = append(indices, marker.Index)
+				break
+			}
+		}
+	}
+
+	// Build tree with STR values.
+	var buffer bytes.Buffer
+	c.tracePrint(&buffer, 0, indices)
+	return buffer.String()
+}
+
+// tracePrint creates the formatted tree for Trace.
+func (c *Clade) tracePrint(buffer *bytes.Buffer, indent int, STRindices []int) {
+	// Write this Element.
+	for i := 0; i < indent; i++ {
+		buffer.WriteString("\t")
+	}
+	buffer.WriteString(c.Element.String())
+	buffer.WriteString(",")
+	buffer.WriteString(c.Element.strDetails(STRindices))
+	buffer.WriteString("\n")
+
+	// Write Samples.
+	for _, sample := range c.Samples {
+		for i := 0; i < indent+1; i++ {
+			buffer.WriteString("\t")
+		}
+		buffer.WriteString(sample.String())
+		buffer.WriteString(",")
+		buffer.WriteString(sample.Element.strDetails(STRindices))
+		buffer.WriteString("\n")
+	}
+	// Write Subclades.
+	for _, clade := range c.Subclades {
+		clade.tracePrint(buffer, indent+1, STRindices)
+	}
 }
 
 // lineInfo is a helper struct for parsing a tree in text format.
