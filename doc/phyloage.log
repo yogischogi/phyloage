@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.10.20)  20 MAR 2016 11:38
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2014.10.20)  28 MAR 2016 17:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -611,7 +611,7 @@ File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
 \Gin@req@width=\dimen109
 )
 (./phyloage.aux (./title.aux) (./introduction.aux) (./installation.aux)
-(./options.aux) (./examples.aux))
+(./options.aux) (./examples.aux) (./theory.aux))
 \openout1 = `phyloage.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 24.
@@ -743,15 +743,15 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 \openout2 = `options.aux'.
 
  (./options.tex
-Overfull \hbox (0.84718pt too wide) in paragraph at lines 31--34
+Overfull \hbox (0.84718pt too wide) in paragraph at lines 34--37
 []\OT1/cmr/m/n/12 Method to be used for cal-cu-lat-ing modal hap-lo-types: \OT1
 /cmtt/m/n/12 phylofriend
  []
 
-) [6
+[6
 
 
-]
+]) [7]
 \openout2 = `examples.aux'.
 
  (./examples.tex
@@ -760,7 +760,7 @@ Overfull \hbox (8.622pt too wide) in paragraph at lines 43--49
 12 mu-ta-tion-rates \OT1/cmr/m/n/12 di-rec-tory of the Phylofriend
  []
 
-[7
+[8
 
 
 ]
@@ -775,13 +775,13 @@ Overfull \hbox (60.77522pt too wide) in paragraph at lines 71--71
 , TMRCA: 2597[] 
  []
 
-[8]
+[9]
 Overfull \hbox (0.64873pt too wide) in paragraph at lines 115--118
 []\OT1/cmr/m/n/12 Currently it seems like one mu-ta-tion counts as 39 years us-
 ing Phylofriend's
  []
 
-[9]
+[10]
 Overfull \hbox (54.60022pt too wide) in paragraph at lines 212--212
 []    \OT1/cmtt/m/n/12 S11481, STR-Count: 2, STRs Downstream: 40, formed: 4200,
  TMRCA: 4000[] 
@@ -793,29 +793,55 @@ Overfull \hbox (54.60022pt too wide) in paragraph at lines 212--212
  TMRCA: 4000[] 
  []
 
-) [10] (./references.tex)
+) [11]
+\openout2 = `theory.aux'.
+
+ (./theory.tex <img/modal.png, id=156, 231.5049pt x 133.4586pt>
+File: img/modal.png Graphic file (type png)
+
+<use img/modal.png>
+Package pdftex.def Info: img/modal.png used on input line 29.
+(pdftex.def)             Requested size: 231.60541pt x 133.51732pt.
+ [12
+
+
+ <./img/modal.png>]
+<img/parsimony.png, id=168, 369.7815pt x 89.8557pt>
+File: img/parsimony.png Graphic file (type png)
+ <use img/parsimony.png>
+Package pdftex.def Info: img/parsimony.png used on input line 83.
+(pdftex.def)             Requested size: 369.88582pt x 89.88837pt.
+
+[13 <./img/parsimony.png>]
+<img/phylofriend.png, id=186, 270.2898pt x 89.8557pt>
+File: img/phylofriend.png Graphic file (type png)
+
+<use img/phylofriend.png>
+Package pdftex.def Info: img/phylofriend.png used on input line 130.
+(pdftex.def)             Requested size: 270.30118pt x 89.86095pt.
+ [14 <./img/phylofriend.png>]) [15] (./references.tex)
 No file phyloage.bbl.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 34.
-[11
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 35.
+[16
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 34.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 35.
  (./phyloage.aux (./title.aux) (./introduction.aux) (./installation.aux)
-(./options.aux) (./examples.aux))
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 34.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 34.
+(./options.aux) (./examples.aux) (./theory.aux))
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 35.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 35.
 Package rerunfilecheck Info: File `phyloage.out' has not changed.
-(rerunfilecheck)             Checksum: 41A28B5875C4983F741EFFF3AB9A5D48;1362.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 34.
+(rerunfilecheck)             Checksum: 4E8799282B7E6C924669D2E97CF3C465;1907.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 35.
  ) 
 Here is how much of TeX's memory you used:
- 9617 strings out of 494469
- 131140 string characters out of 6171578
- 197567 words of memory out of 5000000
- 12708 multiletter control sequences out of 15000+600000
+ 9676 strings out of 494469
+ 131897 string characters out of 6171578
+ 198531 words of memory out of 5000000
+ 12732 multiletter control sequences out of 15000+600000
  10126 words of font info for 34 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 29i,6n,30p,328b,382s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,6n,30p,328b,458s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/dirk/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf
@@ -823,10 +849,10 @@ e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf
 onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/t
 ype1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
 ublic/amsfonts/cm/cmtt12.pfb>
-Output written on phyloage.pdf (11 pages, 105338 bytes).
+Output written on phyloage.pdf (16 pages, 268147 bytes).
 PDF statistics:
- 198 PDF objects out of 1000 (max. 8388607)
- 167 compressed objects within 2 object streams
- 43 named destinations out of 1000 (max. 500000)
- 73 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 278 PDF objects out of 1000 (max. 8388607)
+ 235 compressed objects within 3 object streams
+ 66 named destinations out of 1000 (max. 500000)
+ 120 words of extra memory for PDF output out of 10000 (max. 10000000)
 

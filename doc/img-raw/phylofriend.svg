@@ -14,8 +14,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r"
-   sodipodi:docname="parsimony.svg"
-   inkscape:export-filename="/home/dirk/gopath/src/code.google.com/p/phylofriend/doc/img-raw/phylotrees.png"
+   sodipodi:docname="phylofriend.svg"
+   inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/phylofriend.png"
    inkscape:export-xdpi="300"
    inkscape:export-ydpi="300">
   <defs
@@ -383,8 +383,8 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="2.0601081"
-     inkscape:cx="127.94873"
-     inkscape:cy="127.56028"
+     inkscape:cx="196.63445"
+     inkscape:cy="107.173"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -667,114 +667,6 @@
        inkscape:export-ydpi="300" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 178.14555,1658.1852 35.18937,-17.7166"
-       id="path4258-1"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 213.44051,1640.3178 35.42347,-17.6542"
-       id="path4462-7"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 213.57763,1640.2259 35.06803,17.564"
-       id="path4464-3"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 177.8952,1658.3377 70.851,35.0725"
-       id="path4466-8"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <circle
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#00c8ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-1"
-       cx="248.7657"
-       cy="1622.6351"
-       r="8.2734299"
-       inkscape:transform-center-x="10.965781"
-       inkscape:transform-center-y="-3.9703831"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <circle
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-0-8"
-       cx="248.7657"
-       cy="1658.0681"
-       inkscape:transform-center-x="9.9656117"
-       inkscape:transform-center-y="-3.6082509"
-       r="8.2734299"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <circle
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-0-3-6"
-       cx="213.33263"
-       cy="1640.3517"
-       r="8.2734299"
-       inkscape:transform-center-x="9.9656117"
-       inkscape:transform-center-y="-3.6082509"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <circle
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-0-6-47"
-       cx="248.7657"
-       cy="1693.5012"
-       inkscape:transform-center-x="9.9656117"
-       inkscape:transform-center-y="-3.6082509"
-       r="8.2734299"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <circle
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-0-3-0-7"
-       cx="177.89957"
-       cy="1658.0681"
-       r="8.2734299"
-       inkscape:transform-center-x="9.9656117"
-       inkscape:transform-center-y="-3.6082509"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-0-3-5-5"
-       inkscape:transform-center-x="9.9656117"
-       inkscape:transform-center-y="-3.6082509"
-       sodipodi:type="arc"
-       sodipodi:cx="-34.698864"
-       sodipodi:cy="1640.3517"
-       sodipodi:rx="8.2734299"
-       sodipodi:ry="8.2734299"
-       sodipodi:start="0"
-       sodipodi:end="3.1164672"
-       sodipodi:open="true"
-       d="m -26.425434,1640.3517 a 8.2734299,8.2734299 0 0 1 -8.169496,8.2728 8.2734299,8.2734299 0 0 1 -8.374753,-8.065"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 53.750025,1658.1866 89.424811,1640.47"
        id="path4258-8-6"
        inkscape:connector-curvature="0"
@@ -854,30 +746,13 @@
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
     <circle
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#00c8ff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
        id="path3395-0-3-0-9-1"
        cx="53.883812"
        cy="1658.0681"
        r="8.2734299"
        inkscape:transform-center-x="9.9656117"
        inkscape:transform-center-y="-3.6082509"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:#ffff00;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.16967618;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.89999962;stroke-opacity:1;marker:none;enable-background:accumulate"
-       id="path3395-0-3-5-5-9"
-       inkscape:transform-center-x="9.9656117"
-       inkscape:transform-center-y="-3.6082509"
-       sodipodi:type="arc"
-       sodipodi:cx="89.316887"
-       sodipodi:cy="1640.3517"
-       sodipodi:rx="8.2734299"
-       sodipodi:ry="8.2734299"
-       sodipodi:start="0"
-       sodipodi:end="3.1164672"
-       sodipodi:open="true"
-       d="m 97.590317,1640.3517 a 8.2734299,8.2734299 0 0 1 -8.169496,8.2728 8.2734299,8.2734299 0 0 1 -8.374753,-8.065"
        inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
        inkscape:export-xdpi="300"
        inkscape:export-ydpi="300" />
@@ -896,21 +771,6 @@
          x="44.991257"
          y="1645.7495"
          style="font-size:12.5px">A2</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="205.22966"
-       y="1628.1724"
-       id="text4326-7-2"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"><tspan
-         sodipodi:role="line"
-         id="tspan4328-2-6"
-         x="205.22966"
-         y="1628.1724"
-         style="font-size:12.5px">A1</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -938,14 +798,6 @@
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.0629921;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker8325-0)"
        d="m 15.363964,1658.4288 22.22636,0"
        id="path5296-5"
-       inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.0629921;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker8325-7)"
-       d="m 139.31524,1657.9414 22.22636,0"
-       id="path5296-2"
        inkscape:connector-curvature="0"
        inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
        inkscape:export-xdpi="300"
@@ -980,21 +832,6 @@
          x="-43.893517"
          y="1628.1724"
          style="font-size:12.5px">A1</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="169.30904"
-       y="1645.7495"
-       id="text4326-7-8-1"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"><tspan
-         sodipodi:role="line"
-         id="tspan4328-2-2-5"
-         x="169.30904"
-         y="1645.7495"
-         style="font-size:12.5px">A2</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1040,20 +877,5 @@
          x="74.595711"
          y="1599.6335"
          style="font-size:12.5px">Step 2</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.31266117px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       x="194.5448"
-       y="1599.6335"
-       id="text3134-4-5-2-9-3-4"
-       sodipodi:linespacing="125%"
-       inkscape:export-filename="/home/dirk/gopath/src/github.com/yogischogi/phyloage/doc/img/parsimony.png"
-       inkscape:export-xdpi="300"
-       inkscape:export-ydpi="300"><tspan
-         sodipodi:role="line"
-         id="tspan3136-3-5-4-3-4"
-         x="194.5448"
-         y="1599.6335"
-         style="font-size:12.5px">Step 3</tspan></text>
   </g>
 </svg>
