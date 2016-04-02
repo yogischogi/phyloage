@@ -27,7 +27,7 @@ func main() {
 		inspect    = flag.String("inspect", "", "Comma separated list of SNP names to search for.")
 		statistics = flag.Bool("statistics", false, "Prints marker statistics.")
 		method     = flag.String("method", "parsimony", "Method to calculate modal haplotypes: phylofriend or parsimony.")
-		stage      = flag.Int("stage", 3, "Processing stage for parsimony algorithm: 1, 2 or 3.")
+		stage      = flag.Int("stage", 4, "Processing stage for parsimony algorithm: 1, 2, 3, 4.")
 		trace      = flag.String("trace", "", "Comma separated list of STR names to print out trace information.")
 	)
 	flag.Parse()
@@ -159,8 +159,8 @@ func main() {
 func WriteToFile(statistics *genetic.MarkerStatistics) {
 	filename := "mutrates.txt"
 	minFreq := 1.0
-	nValuesMin := 2
-	nValuesMax := 3
+	nValuesMin := 1
+	nValuesMax := 5
 	stats := statistics.Select(minFreq, nValuesMin, nValuesMax)
 	err := ioutil.WriteFile(filename, []byte(stats.MutationRates()), os.ModePerm)
 	if err != nil {

@@ -38,10 +38,14 @@ for example the following options are identical:
 	should be used for debugging or to see in detail what the algorithm
 	does. The following stages are valid:
 	\begin{description}
-	\item[1] Calculates average haplotypes using real numbers.
-	\item[2] Replaces real numbers by real world mutation values
+	\item[1] Calculates haplotype values that strictly satisfy
+		the maximum parsimony criterion.
+	\item[2] Calculates average haplotype values for the rest
+		by using real numbers.
+	\item[3] Replaces real numbers by real world mutation values
 		and sets all uncertain values to -1.
-	\item[3] Forces all values to real world mutation values.
+		This stage is only for visualization and debugging.
+	\item[4] Forces all values to real world mutation values.
 	\end{description}
 \end{description}
 

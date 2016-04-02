@@ -29,13 +29,16 @@ const (
 //
 //  0: Return without doing anything.
 //
-//  1: Calculate average haplotypes using real numbers.
+//  1: Calculate haplotypes that satisfy the maximum
+//		parsimony criterion.
 //
-//  2: Mark results that do not have a nearest neighbor among
+//  2: Calculate average haplotypes using real numbers.
+//
+//  3: Mark results that do not have a nearest neighbor among
 //     real mutation values as Uncertain.
 //     This stage is only for visualization and debugging.
 //
-//  3: Replace uncertain values in the top node by using the
+//  4: Replace uncertain values in the top node by using the
 //     nearest and smallest real mutation neighbor.
 //     Recalculate the tree top down to find values for previously
 //     uncertain values.
@@ -44,16 +47,21 @@ func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStat
 		return
 	}
 	if processingStage >= 1 {
-		// Calculate average haplotypes using real numbers.
-		c.calculateAverageHaplotypes()
+		// Calculate haplotypes that satisfy the maximum
+		// parsimony criterion.
+		c.calculateHaplotypes(maximumParsimonyHaplotype)
 	}
-	if processingStage == 2 {
+	if processingStage >= 2 {
+		// Calculate average haplotypes using real numbers.
+		c.calculateHaplotypes(averageHaplotype)
+	}
+	if processingStage == 3 {
 		// Mark results that do not have a nearest neighbor among
 		// real mutation values as Uncertain.
 		// This stage is only for visualization and debugging.
 		c.constrainHaplotypes(statistics, markUncertain)
 	}
-	if processingStage >= 3 {
+	if processingStage >= 4 {
 		// Map all markers with certain nearest neighbors to real world marker values.
 		c.constrainHaplotypes(statistics, mapCertain)
 
@@ -68,9 +76,12 @@ func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStat
 	}
 }
 
-// calculateAverageHaplotypes calculates the average haplotype for
-// this clade and all subclades.
-func (c *Clade) calculateAverageHaplotypes() {
+// calculateHaplotypes calculates the haplotype for this clade
+// and all subclades, using the function haplotype to perform
+// the calculation.
+// If c.Person already exists, this method calculates only uncertain
+// values in c.Person.
+func (c *Clade) calculateHaplotypes(haplotype func(persons []*genetic.Person) *genetic.Person) {
 	// Create a list of haplotypes from samples and subclades.
 	persons := make([]*genetic.Person, 0)
 	for i, _ := range c.Samples {
@@ -79,17 +90,21 @@ func (c *Clade) calculateAverageHaplotypes() {
 		}
 	}
 	for i, _ := range c.Subclades {
-		c.Subclades[i].calculateAverageHaplotypes()
+		c.Subclades[i].calculateHaplotypes(haplotype)
 		if c.Subclades[i].Person != nil {
 			persons = append(persons, c.Subclades[i].Person)
 		}
 	}
 	// Calculate modal haplotype for the list.
-	modal := averageHaplotype(persons)
+	modal := haplotype(persons)
 	modal.ID = c.SNPs[0]
 	modal.Name = c.SNPs[0]
 	modal.Label = c.SNPs[0]
-	c.Person = modal
+	if c.Person == nil {
+		c.Person = modal
+	} else {
+		replaceUncertains(c.Person, modal)
+	}
 }
 
 // averageHaplotype calculates the average haplotype for a group of persons.
@@ -248,6 +263,16 @@ func (c *Clade) recalculateModalHaplotypes(parent *Clade, statistics *genetic.Ma
 	}
 }
 
+// replaceUncertains replaces all uncertain marker values in target
+// with values from source.
+func replaceUncertains(target, source *genetic.Person) {
+	for i, _ := range target.YstrMarkers {
+		if target.YstrMarkers[i] == Uncertain {
+			target.YstrMarkers[i] = source.YstrMarkers[i]
+		}
+	}
+}
+
 // replaceUncertainValues replaces all uncertain marker values in target
 // with values from source. The result is mapped to the closest real
 // world marker values using the marker statistics.
@@ -259,4 +284,82 @@ func replaceUncertainValues(target, source *genetic.Person, statistics *genetic.
 			target.YstrMarkers[i] = newValue
 		}
 	}
+}
+
+// maximumParsimonyHaplotype calculates the modal haplotype for
+// a group of persons. The modal haplotype satisfies the maximum
+// parsimony criterion.
+//
+// Criteria for the modal value of a mutation:
+//
+// 	1 value: return value, because the modal of a
+//		single haplotype is the haplotype itself.
+//
+//  >2 values: return the maximum parsimony value
+//		If it is not possible to determine a value, Uncertain is returned.
+func maximumParsimonyHaplotype(persons []*genetic.Person) *genetic.Person {
+	modal := new(genetic.Person)
+	switch len(persons) {
+	case 0:
+		// Return set of empty values.
+		return modal
+	case 1:
+		// Return the person itself.
+		modal = persons[0]
+		return modal
+	default:
+		// Calculate modal value for each marker.
+		for marker := 0; marker < len(persons[0].YstrMarkers); marker++ {
+			values := make([]float64, 0, len(persons))
+			for _, person := range persons {
+				values = append(values, person.YstrMarkers[marker])
+			}
+			modal.YstrMarkers[marker] = maximumParsimony(values)
+		}
+		return modal
+	}
+}
+
+// maximumParsimony returns the value from values that satisfies
+// the maximum parsimony criterion. values are the possible mutational
+// values.
+// To calculate the distance, the infinite alleles model is used.
+// This allows us to use uncertain values (-1) and compare them to
+// the other mutational values.
+// If no unique result can be found, the result is Uncertain.
+func maximumParsimony(values []float64) float64 {
+	// singleDist is the distance between two mutational values
+	// using the infinite alleles model.
+	var singleDist = func(a, b float64) float64 {
+		if a == b {
+			return 0
+		} else {
+			return 1
+		}
+	}
+	// totalDist is the number of mutations neccessary to reach
+	// all values from x.
+	var totalDist = func(x float64, values []float64) float64 {
+		dist := 0.0
+		for _, v := range values {
+			dist += singleDist(x, v)
+		}
+		return dist
+	}
+
+	// Test all values if one of them satisfies the minimum
+	// distance criterion.
+	var result float64 = Uncertain
+	minDist := math.Inf(1)
+	for _, x := range values {
+		distance := totalDist(x, values)
+		if distance < minDist {
+			minDist = distance
+			result = x
+		} else if distance == minDist && x != result {
+			// Two different values satisfy the minimum condition.
+			result = Uncertain
+		}
+	}
+	return result
 }

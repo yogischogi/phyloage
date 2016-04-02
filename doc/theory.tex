@@ -99,10 +99,14 @@ cases there simply is no valid solution for a certain marker.
 The algorithm that is used by Phyloage works like this:
 
 \begin{enumerate}
-\item The modal values are calculated using real numbers.
-	This solution satisfies the maximum parsimony criterion,
-	but it is not possible in reality because real marker
-	values are restricted to whole numbers.
+\item If possible, modal values that strictly satisfy the
+	maximum parsimony criterion are calculated. These are
+	the easy cases.
+\item The rest of the modal values are calculated by using
+	averages and real numbers. This solution should come
+	close to the maximum parsimony criterion, at least for
+	many samples. In reality the solution is not possible
+	because real marker values are restricted to whole numbers.
 \item The modal values are mapped to their nearest neighbors
 	from the set of real marker values. Still some markers
 	can not be calculated because they do not have a unique
@@ -114,7 +118,7 @@ The algorithm that is used by Phyloage works like this:
 \end{enumerate}
 
 The algorithm does not necessarily find the best solution
-possible, but it should be a very good one. For more information
+possible, but it should find a good one. For more information
 please consult the program's source code documentation
 \cite{PhyloageSourceDoc} directly.
 
