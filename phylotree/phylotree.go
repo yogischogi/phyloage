@@ -17,7 +17,7 @@ import (
 // Uncertain is used for uncertain or unknown values.
 const Uncertain = -1
 
-// Element is a node or a leaf of the tree.
+// Element is a node or leaf of the tree.
 type Element struct {
 	SNPs []string
 	// STRCount is the number of unique STR mutations for this element.
