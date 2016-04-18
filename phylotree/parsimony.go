@@ -91,20 +91,33 @@ func (c *Clade) recalculateMaxParsimony(marker int, parent *Clade) {
 
 // maxParsimony returns the value from values that satisfies
 // the maximum parsimony criterion.
-// To calculate the distance, the infinite alleles model is used.
-// This allows us to use uncertain values (-1) and compare them to
-// the other mutational values.
+// To calculate the distance, the stepwise mutation model is used.
 // If no unique result can be found, the result is Uncertain.
+//
+// I have compared multiple variations of this function using
+// YFull tree 4.03 and data from the M343 xU106 xP312 project.
+// At the time of the comparison (April 2016) the version of the
+// method, using the stepwise mutation model, yielded the best
+// results. I have checked TMRCA and formed estimates for a
+// selection off different clades.
 func maxParsimony(values []float64) float64 {
 	// singleDist is the distance between two mutational values
-	// using the infinite alleles model.
+	// using the stepwise mutation model.
 	var singleDist = func(a, b float64) float64 {
-		if a == b {
-			return 0
-		} else {
-			return 1
-		}
+		return math.Abs(a - b)
 	}
+	/*
+		// singleDist is the distance between two mutational values
+		// using the infinite alleles model.
+		var singleDist = func(a, b float64) float64 {
+			if a == b {
+				return 0
+			} else {
+				return 1
+			}
+		}
+	*/
+
 	// totalDist is the number of mutations neccessary to reach
 	// all values from x.
 	var totalDist = func(x float64, values []float64) float64 {
@@ -115,12 +128,19 @@ func maxParsimony(values []float64) float64 {
 		return dist
 	}
 
+	// Use only positive values for calculation.
+	vals := make([]float64, 0, len(values))
+	for _, v := range values {
+		if v > 0 {
+			vals = append(vals, v)
+		}
+	}
 	// Test all values if one of them satisfies the minimum
-	// distance criterion.
+	// distance criterion (maximum parsimony).
 	var result float64 = 0
 	minDist := math.Inf(1)
-	for _, x := range values {
-		distance := totalDist(x, values)
+	for _, x := range vals {
+		distance := totalDist(x, vals)
 		if distance < minDist {
 			minDist = distance
 			result = x
