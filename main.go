@@ -21,6 +21,7 @@ func main() {
 		treein     = flag.String("treein", "", "Input filename for phylogenetic tree (.txt).")
 		treeout    = flag.String("treeout", "", "Output filename for phylogenetic tree in TXT format.")
 		cal        = flag.Float64("cal", 1, "Calibration factor for TMRCA calculation.")
+		offset     = flag.Float64("offset", 0, "Offset is added to all calculated ages.")
 		personsin  = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
 		mrin       = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		gentime    = flag.Float64("gentime", 1, "Generation time in years.")
@@ -41,12 +42,12 @@ func main() {
 
 	// Load phylogenetic tree from file.
 	if *treein == "" {
-		fmt.Printf("No filename for input tree specified.\n")
+		fmt.Printf("No filename for input tree specified.\r\n")
 		os.Exit(1)
 	}
 	tree, err := phylotree.NewFromFile(*treein)
 	if err != nil {
-		fmt.Printf("Error reading tree from file, %v.\n", err)
+		fmt.Printf("Error reading tree from file, %v.\r\n", err)
 		os.Exit(1)
 	}
 
@@ -54,7 +55,7 @@ func main() {
 	if *mrin != "" {
 		mutationRates, err = genfiles.ReadMutationRates(*mrin)
 		if err != nil {
-			fmt.Printf("Error reading mutation rates %v.\n", err)
+			fmt.Printf("Error reading mutation rates %v.\r\n", err)
 			os.Exit(1)
 		}
 	} else {
@@ -70,7 +71,7 @@ func main() {
 			fileInfo, err := os.Stat(filename)
 			switch {
 			case err != nil:
-				fmt.Printf("Error, something is wrong with personsin, %v.\n", err)
+				fmt.Printf("Error, something is wrong with personsin, %v.\r\n", err)
 				os.Exit(1)
 			case fileInfo.IsDir():
 				pers, err = genfiles.ReadPersonsFromDir(filename)
@@ -80,7 +81,7 @@ func main() {
 				pers, err = genfiles.ReadPersonsFromTXT(filename)
 			}
 			if err != nil {
-				fmt.Printf("Error loading persons data %v.\n", err)
+				fmt.Printf("Error loading persons data %v.\r\n", err)
 				os.Exit(1)
 			}
 			persons = append(persons, pers...)
@@ -107,7 +108,7 @@ func main() {
 		case "parsimony":
 			tree.CalculateModalHaplotypesParsimony(stat, *stage)
 		default:
-			fmt.Printf("Error, unknown method %q to calculate modal haplotypes.\n", *method)
+			fmt.Printf("Error, unknown method %q to calculate modal haplotypes.\r\n", *method)
 			os.Exit(1)
 		}
 
@@ -118,28 +119,28 @@ func main() {
 	// If the STR-Count is provided in the original tree input
 	// file the calculation can be performed even without sample
 	// data.
-	tree.CalculateAge(*gentime, *cal)
+	tree.CalculateAge(*gentime, *cal, *offset)
 
 	// Save resulting tree to file or print it out.
 	if *treeout != "" {
 		date := time.Now().Format("2006 Jan 2")
 		var buffer bytes.Buffer
-		buffer.WriteString("// This tree was created by the phyloage program: https://github.com/yogischogi/phyloage\n")
-		buffer.WriteString("// Command used:\n// ")
+		buffer.WriteString("// This tree was created by the phyloage program: https://github.com/yogischogi/phyloage\r\n")
+		buffer.WriteString("// Command used:\r\n// ")
 		for _, arg := range os.Args {
 			buffer.WriteString(arg)
 			buffer.WriteString(" ")
 		}
-		buffer.WriteString("\n")
-		buffer.WriteString("// " + date + "\n\n")
+		buffer.WriteString("\r\n")
+		buffer.WriteString("// " + date + "\r\n\r\n")
 		buffer.WriteString(tree.String())
 		err := ioutil.WriteFile(*treeout, buffer.Bytes(), os.ModePerm)
 		if err != nil {
-			fmt.Printf("Error writing tree to file, %v.\n", err)
+			fmt.Printf("Error writing tree to file, %v.\r\n", err)
 			os.Exit(1)
 		}
 	} else {
-		fmt.Printf("%v\n", tree)
+		fmt.Printf("%v\r\n", tree)
 	}
 
 	// Print tree with values of specified STRs.
@@ -164,7 +165,7 @@ func WriteToFile(statistics *genetic.MarkerStatistics) {
 	stats := statistics.Select(minFreq, nValuesMin, nValuesMax)
 	err := ioutil.WriteFile(filename, []byte(stats.MutationRates()), os.ModePerm)
 	if err != nil {
-		fmt.Printf("Error writing mutation rates to file, %v.\n", err)
+		fmt.Printf("Error writing mutation rates to file, %v.\r\n", err)
 		os.Exit(1)
 	}
 }

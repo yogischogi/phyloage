@@ -54,7 +54,7 @@ func (e *Element) Contains(searchTerm string) bool {
 func (e *Element) Details() string {
 	var buffer bytes.Buffer
 	buffer.WriteString(e.String())
-	buffer.WriteString("\n")
+	buffer.WriteString("\r\n")
 	if e.Person != nil {
 		buffer.WriteString(e.Person.YstrMarkers.String())
 	}
@@ -332,7 +332,9 @@ func (c *Clade) CalculateDistances(mutationRates genetic.YstrMarkers, distance g
 // gentime is the generation time in years.
 // calibration is a calibration factor that is multiplied
 // to the result.
-func (c *Clade) CalculateAge(gentime, calibration float64) {
+// offset is added to all calculated ages to account for the ages
+// of living persons. YFull currently uses an offset of 60 years.
+func (c *Clade) CalculateAge(gentime, calibration, offset float64) {
 	var nChilds float64 = 0
 	var count float64 = 0
 	// Count STR mutations for samples.
@@ -344,7 +346,7 @@ func (c *Clade) CalculateAge(gentime, calibration float64) {
 	}
 	// Count STR mutations for subclades.
 	for i, _ := range c.Subclades {
-		c.Subclades[i].CalculateAge(gentime, calibration)
+		c.Subclades[i].CalculateAge(gentime, calibration, offset)
 		subcladeSTRs := c.Subclades[i].STRCount + c.Subclades[i].STRCountDownstream
 		if subcladeSTRs >= 0 {
 			count += subcladeSTRs
@@ -354,9 +356,9 @@ func (c *Clade) CalculateAge(gentime, calibration float64) {
 	// Calculate average number of mutations.
 	if nChilds > 0 {
 		c.STRCountDownstream = count / nChilds
-		c.TMRCA_STR = c.STRCountDownstream * gentime * calibration
+		c.TMRCA_STR = c.STRCountDownstream*gentime*calibration + offset
 	}
-	c.AgeSTR = (c.STRCount + c.STRCountDownstream) * gentime * calibration
+	c.AgeSTR = (c.STRCount+c.STRCountDownstream)*gentime*calibration + offset
 }
 
 func (c *Clade) String() string {
@@ -380,7 +382,7 @@ func (c *Clade) prettyPrint(buffer *bytes.Buffer, indent int) {
 			fmt.Sprintf(", STRs Downstream: %.0f, formed: %.0f, TMRCA: %.0f",
 				c.STRCountDownstream, c.AgeSTR, c.TMRCA_STR))
 	}
-	buffer.WriteString("\n")
+	buffer.WriteString("\r\n")
 
 	// Write Samples.
 	for _, sample := range c.Samples {
@@ -388,7 +390,7 @@ func (c *Clade) prettyPrint(buffer *bytes.Buffer, indent int) {
 			buffer.WriteString("\t")
 		}
 		buffer.WriteString(sample.String())
-		buffer.WriteString("\n")
+		buffer.WriteString("\r\n")
 	}
 	// Write Subclades.
 	for _, clade := range c.Subclades {
@@ -478,7 +480,7 @@ func (c *Clade) tracePrint(buffer *bytes.Buffer, indent int, STRindices []int) {
 	buffer.WriteString(c.Element.String())
 	buffer.WriteString(",")
 	buffer.WriteString(c.Element.strDetails(STRindices))
-	buffer.WriteString("\n")
+	buffer.WriteString("\r\n")
 
 	// Write Samples.
 	for _, sample := range c.Samples {
@@ -488,7 +490,7 @@ func (c *Clade) tracePrint(buffer *bytes.Buffer, indent int, STRindices []int) {
 		buffer.WriteString(sample.String())
 		buffer.WriteString(",")
 		buffer.WriteString(sample.Element.strDetails(STRindices))
-		buffer.WriteString("\n")
+		buffer.WriteString("\r\n")
 	}
 	// Write Subclades.
 	for _, clade := range c.Subclades {

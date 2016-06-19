@@ -25,7 +25,7 @@ CTS4528, S1200
 
 Each line of the tree contains one or more SNPs or a sample
 ID. Subclades and samples are indented by using tabs. Each
-sample starts with \emph{id:} followed by the ID. In our case
+sample starts with \texttt{id:} followed by the ID. In our case
 these are typical YFull IDs but Phyloage supports Family Tree
 DNA data as well. Phyloage uses the Phylofriend
 \cite{Phylofriend} program for data import and many
@@ -71,18 +71,18 @@ CTS4528, S1200, STRs Downstream: 145, formed: 4644, TMRCA: 4644
 \end{verbatim}
 
 Because we have used mutation rates for 111 markers, that
-were calibrated by using generations, the \emph{STR count}
+were calibrated by using generations, the \texttt{STR count}
 is given in generations. It says for how long a Clade has
 existed before it developed any subclades. The
-\emph{STRs Downstream} is a measure for the TMRCA.
+\texttt{STRs Downstream} is a measure for the TMRCA.
 
-\emph{formed} denotes the age of the clade in years. It is
-calculated by adding \emph{STR count} to \emph{STRs Downstream}
+\texttt{formed} denotes the age of the clade in years. It is
+calculated by adding \texttt{STR count} to \texttt{STRs Downstream}
 and multiplying the result by the generation time (the
-\emph{gentime} parameter) and an additional calibration
+\texttt{gentime} parameter) and an additional calibration
 factor (1 by default).
 
-\emph{TMRCA} is the same as \emph{STRs Downstream}. It is
+\texttt{TMRCA} is the same as \texttt{STRs Downstream}. It is
 just multiplied by the generation time and the calibration
 factor.
 
@@ -108,7 +108,7 @@ we execute the command:
 
 \noindent The above command will do mutation counting using
 all markers available and then upscale the results to 500
-markers. The \emph{500-count.txt} contains the mutation rates
+markers. The \texttt{500-count.txt} contains the mutation rates
 for marker counting. It can be found in the Phylofriend
 \cite{Phylofriend} \emph{mutationrates} directory.
 
