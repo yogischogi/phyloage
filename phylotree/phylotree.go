@@ -510,12 +510,16 @@ type lineInfo struct {
 // to the parent clade. indent is the indentation of the parent clade
 // in the text file.
 func parseTree(parent *Clade, indent int, lines []lineInfo) error {
+	childIndent := -1
 	for i, _ := range lines {
-		childIndent := indent + 1
 		switch {
-		case lines[i].indent < childIndent:
+		case lines[i].indent <= indent:
 			// Return if indentation shows beginning of next block.
 			return nil
+		case childIndent == -1 && lines[i].indent > indent:
+			// Determine the indentation of the child block.
+			childIndent = lines[i].indent
+			fallthrough
 		case lines[i].indent == childIndent:
 			// Parse child elements.
 			if strings.Contains(lines[i].text, "id:") {
