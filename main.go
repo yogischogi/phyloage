@@ -30,6 +30,8 @@ func main() {
 		method     = flag.String("method", "parsimony", "Method to calculate modal haplotypes: phylofriend or parsimony.")
 		stage      = flag.Int("stage", 4, "Processing stage for parsimony algorithm: 1, 2, 3, 4.")
 		trace      = flag.String("trace", "", "Comma separated list of STR names to print out trace information.")
+		subclade   = flag.String("subclade", "", "Selects a specific branch of the tree.")
+		htmlout    = flag.String("htmlout", "", "Output filename for persons in HTML format.")
 	)
 	flag.Parse()
 
@@ -48,6 +50,13 @@ func main() {
 	tree, err := phylotree.NewFromFile(*treein)
 	if err != nil {
 		fmt.Printf("Error reading tree from file, %v.\r\n", err)
+		os.Exit(1)
+	}
+
+	// Select subclade.
+	tree = tree.Subclade(*subclade)
+	if tree == nil {
+		fmt.Printf("Error, could not find specified subclade %s.\r\n", *subclade)
 		os.Exit(1)
 	}
 
@@ -141,6 +150,15 @@ func main() {
 		}
 	} else {
 		fmt.Printf("%v\r\n", tree)
+	}
+
+	// Write Persons' Y-STR values in HTML format.
+	if *htmlout != "" {
+		persons := tree.Persons()
+		err = genfiles.WritePersonsAsHTML(*htmlout, persons, genetic.MaxMarkers)
+		if err != nil {
+			fmt.Printf("Error writing persons data to HTML file, %v.\n", err)
+		}
 	}
 
 	// Print tree with values of specified STRs.

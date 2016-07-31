@@ -255,6 +255,24 @@ func (c *Clade) AddSubclade(clade Clade) {
 	c.Subclades = append(c.Subclades, clade)
 }
 
+// Persons returns a list of all persons who belong to this clade.
+// This includes the calculated modal haplotypes.
+func (c *Clade) Persons() []*genetic.Person {
+	persons := make([]*genetic.Person, 0, 50)
+	if c.Person != nil {
+		persons = append(persons, c.Person)
+	}
+	for i, _ := range c.Samples {
+		if c.Samples[i].Person != nil {
+			persons = append(persons, c.Samples[i].Person)
+		}
+	}
+	for i, _ := range c.Subclades {
+		persons = append(persons, c.Subclades[i].Persons()...)
+	}
+	return persons
+}
+
 // InsertPersons traverses the tree and adds the appropriate
 // person to a leaf if the ID of the sample and the person's ID
 // are identical.
@@ -496,6 +514,41 @@ func (c *Clade) tracePrint(buffer *bytes.Buffer, indent int, STRindices []int) {
 	for _, clade := range c.Subclades {
 		clade.tracePrint(buffer, indent+1, STRindices)
 	}
+}
+
+// Subclade returns the subclade that contains searchTerm.
+func (c *Clade) Subclade(cladeName string) *Clade {
+	var result *Clade
+	if c.contains(cladeName) {
+		result = c
+	} else {
+		for i, _ := range c.Subclades {
+			if c.Subclades[i].contains(cladeName) {
+				result = &c.Subclades[i]
+				break
+			} else {
+				result = c.Subclades[i].Subclade(cladeName)
+				if result != nil {
+					break
+				}
+			}
+		}
+	}
+	return result
+}
+
+// contains checks if the text representation of this clade
+// contains cladeName.
+// The method only returns true if the found cladeName is
+// terminated by a non digit. This should make sure that the
+// found cladeName is not part of a longer SNP name.
+func (c *Clade) contains(cladeName string) bool {
+	for _, snp := range c.SNPs {
+		if strings.ToLower(snp) == strings.ToLower(cladeName) {
+			return true
+		}
+	}
+	return false
 }
 
 // lineInfo is a helper struct for parsing a tree in text format.
