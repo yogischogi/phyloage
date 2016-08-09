@@ -54,10 +54,12 @@ func main() {
 	}
 
 	// Select subclade.
-	tree = tree.Subclade(*subclade)
-	if tree == nil {
-		fmt.Printf("Error, could not find specified subclade %s.\r\n", *subclade)
-		os.Exit(1)
+	if *subclade != "" {
+		tree = tree.Subclade(*subclade)
+		if tree == nil {
+			fmt.Printf("Error, could not find specified subclade %s.\r\n", *subclade)
+			os.Exit(1)
+		}
 	}
 
 	// Read mutation rates from file.
