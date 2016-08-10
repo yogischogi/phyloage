@@ -32,6 +32,7 @@ func main() {
 		trace      = flag.String("trace", "", "Comma separated list of STR names to print out trace information.")
 		subclade   = flag.String("subclade", "", "Selects a specific branch of the tree.")
 		htmlout    = flag.String("htmlout", "", "Output filename for persons in HTML format.")
+		model      = flag.String("model", "hybrid", "Mutation model: hybrid or infinite.")
 	)
 	flag.Parse()
 
@@ -112,18 +113,33 @@ func main() {
 			// WriteToFile(stat)
 		}
 
+		var isInfiniteAlleles bool
+		switch *model {
+		case "infinite":
+			isInfiniteAlleles = true
+		case "hybrid":
+			isInfiniteAlleles = false
+		default:
+			fmt.Printf("Error, unknown mutation model: %s.\n", *model)
+			os.Exit(1)
+		}
+
 		// Calculate modal haplotypes.
 		switch *method {
 		case "phylofriend":
 			tree.CalculateModalHaplotypes()
 		case "parsimony":
-			tree.CalculateModalHaplotypesParsimony(stat, *stage)
+			tree.CalculateModalHaplotypesParsimony(stat, *stage, isInfiniteAlleles)
 		default:
 			fmt.Printf("Error, unknown method %q to calculate modal haplotypes.\r\n", *method)
 			os.Exit(1)
 		}
 
-		tree.CalculateDistances(mutationRates, genetic.Distance)
+		if isInfiniteAlleles == true {
+			tree.CalculateDistances(mutationRates, genetic.DistanceInfiniteAlleles)
+		} else {
+			tree.CalculateDistances(mutationRates, genetic.DistanceHybrid)
+		}
 	}
 
 	// Calculate the age of this clade and all subclades.

@@ -8,10 +8,10 @@ import (
 // for this clade and all of it's sublcades that satisfy the maximum
 // parsimony criterion. Because this is often not possible for all
 // values, those values are set to Uncertain.
-func (c *Clade) calculateModalHaplotypesMaxParsimony() {
+func (c *Clade) calculateModalHaplotypesMaxParsimony(isInfiniteAlleles bool) {
 	// Calculate maximum parsimony for each marker.
 	for i, _ := range c.Person.YstrMarkers {
-		c.calculateMaxParsimony(i)
+		c.calculateMaxParsimony(i, isInfiniteAlleles)
 	}
 }
 
@@ -19,7 +19,7 @@ func (c *Clade) calculateModalHaplotypesMaxParsimony() {
 // of a marker for this clade and all of it's subclades.
 // If the method does not yield a clear result for a specific
 // marker value, that value is set to Uncertain.
-func (c *Clade) calculateMaxParsimony(marker int) {
+func (c *Clade) calculateMaxParsimony(marker int, isInfiniteAlleles bool) {
 	// Calculate modal value using only downstream samples
 	// and subclades.
 	var values []float64
@@ -32,13 +32,13 @@ func (c *Clade) calculateMaxParsimony(marker int) {
 		}
 	}
 	for i, _ := range c.Subclades {
-		c.Subclades[i].calculateMaxParsimony(marker)
+		c.Subclades[i].calculateMaxParsimony(marker, isInfiniteAlleles)
 		value := c.Subclades[i].Person.YstrMarkers[marker]
 		if value != 0 {
 			values = append(values, value)
 		}
 	}
-	modal := maxParsimony(values)
+	modal := maxParsimony(values, isInfiniteAlleles)
 	c.Person.YstrMarkers[marker] = modal
 
 	// If we got a clear result, recalculate Uncertain values
@@ -47,7 +47,7 @@ func (c *Clade) calculateMaxParsimony(marker int) {
 	if modal != Uncertain && modal != 0 {
 		for i, _ := range c.Subclades {
 			if c.Subclades[i].Person.YstrMarkers[marker] == Uncertain {
-				c.Subclades[i].recalculateMaxParsimony(marker, c)
+				c.Subclades[i].recalculateMaxParsimony(marker, isInfiniteAlleles, c)
 			}
 		}
 	}
@@ -58,7 +58,7 @@ func (c *Clade) calculateMaxParsimony(marker int) {
 // This can yield to a clear result, if the the child value can not
 // be calculated from it's own child values, but the parent value is
 // clear because of parallel subclades.
-func (c *Clade) recalculateMaxParsimony(marker int, parent *Clade) {
+func (c *Clade) recalculateMaxParsimony(marker int, isInfiniteAlleles bool, parent *Clade) {
 	var values []float64
 	values = append(values, parent.Person.YstrMarkers[marker])
 	for i, _ := range c.Samples {
@@ -75,7 +75,7 @@ func (c *Clade) recalculateMaxParsimony(marker int, parent *Clade) {
 			values = append(values, value)
 		}
 	}
-	modal := maxParsimony(values)
+	modal := maxParsimony(values, isInfiniteAlleles)
 	c.Person.YstrMarkers[marker] = modal
 
 	// If we got a clear result, recalculate Uncertain values
@@ -83,7 +83,7 @@ func (c *Clade) recalculateMaxParsimony(marker int, parent *Clade) {
 	if modal != Uncertain && modal != 0 {
 		for i, _ := range c.Subclades {
 			if c.Subclades[i].Person.YstrMarkers[marker] == Uncertain {
-				c.Subclades[i].recalculateMaxParsimony(marker, c)
+				c.Subclades[i].recalculateMaxParsimony(marker, isInfiniteAlleles, c)
 			}
 		}
 	}
@@ -100,23 +100,30 @@ func (c *Clade) recalculateMaxParsimony(marker int, parent *Clade) {
 // method, using the stepwise mutation model, yielded the best
 // results. I have checked TMRCA and formed estimates for a
 // selection off different clades.
-func maxParsimony(values []float64) float64 {
-	// singleDist is the distance between two mutational values
+func maxParsimony(values []float64, isInfiniteAlleles bool) float64 {
+	// stepwiseDist is the distance between two mutational values
 	// using the stepwise mutation model.
-	var singleDist = func(a, b float64) float64 {
+	var stepwiseDist = func(a, b float64) float64 {
 		return math.Abs(a - b)
 	}
-	/*
-		// singleDist is the distance between two mutational values
-		// using the infinite alleles model.
-		var singleDist = func(a, b float64) float64 {
-			if a == b {
-				return 0
-			} else {
-				return 1
-			}
+
+	// infiniteDist is the distance between two mutational values
+	// using the infinite alleles model.
+	var infiniteDist = func(a, b float64) float64 {
+		if a == b {
+			return 0
+		} else {
+			return 1
 		}
-	*/
+	}
+
+	// singleDist is the distance between two mutational values
+	var singleDist func(a, b float64) float64
+	if isInfiniteAlleles == true {
+		singleDist = infiniteDist
+	} else {
+		singleDist = stepwiseDist
+	}
 
 	// totalDist is the number of mutations neccessary to reach
 	// all values from x.

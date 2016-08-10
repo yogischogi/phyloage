@@ -42,7 +42,7 @@ const (
 //     nearest and smallest real mutation neighbor.
 //     Recalculate the tree top down to find values for previously
 //     uncertain values.
-func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStatistics, processingStage int) {
+func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStatistics, processingStage int, isInfiniteAlleles bool) {
 	if processingStage < 1 {
 		return
 	}
@@ -52,7 +52,7 @@ func (c *Clade) CalculateModalHaplotypesParsimony(statistics *genetic.MarkerStat
 
 		// Calculate haplotypes that satisfy the maximum
 		// parsimony criterion.
-		c.calculateModalHaplotypesMaxParsimony()
+		c.calculateModalHaplotypesMaxParsimony(isInfiniteAlleles)
 	}
 	if processingStage >= 2 {
 		// Calculate average haplotypes using real numbers.
