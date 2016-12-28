@@ -192,6 +192,8 @@ func newClade(text string) (Clade, error) {
 				return result, errors.New(msg)
 			}
 			result.STRCount = count
+		case strings.HasPrefix(token, "TMRCA:"):
+			// Ignore because this TMRCA has to be newly calculated.
 		default:
 			result.AddSNP(token)
 		}
