@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.7.8)  10 AUG 2016 17:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2017.8.22)  15 MAR 2018 15:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -889,7 +889,7 @@ Overfull \hbox (54.60022pt too wide) in paragraph at lines 212--212
 ) [11]
 \openout2 = `theory.aux'.
 
- (./theory.tex <img/modal.png, id=156, 231.5049pt x 133.4586pt>
+ (./theory.tex <img/modal.png, id=166, 231.5049pt x 133.4586pt>
 File: img/modal.png Graphic file (type png)
 
 <use img/modal.png>
@@ -899,23 +899,52 @@ Package pdftex.def Info: img/modal.png used on input line 29.
 
 
  <./img/modal.png>]
-<img/parsimony.png, id=168, 369.7815pt x 89.8557pt>
+<img/parsimony.png, id=178, 369.7815pt x 89.8557pt>
 File: img/parsimony.png Graphic file (type png)
  <use img/parsimony.png>
 Package pdftex.def Info: img/parsimony.png used on input line 83.
 (pdftex.def)             Requested size: 369.88582pt x 89.88837pt.
 
 [13 <./img/parsimony.png>]
-<img/phylofriend.png, id=186, 270.2898pt x 89.8557pt>
+<img/phylofriend.png, id=196, 270.2898pt x 89.8557pt>
 File: img/phylofriend.png Graphic file (type png)
 
 <use img/phylofriend.png>
 Package pdftex.def Info: img/phylofriend.png used on input line 134.
 (pdftex.def)             Requested size: 270.30118pt x 89.86095pt.
- [14]) [15 <./img/phylofriend.png>] (./references.tex)
+ [14]
+<img/weights.png, id=209, 166.7028pt x 93.4692pt>
+File: img/weights.png Graphic file (type png)
+ <use img/weights.png>
+Package pdftex.def Info: img/weights.png used on input line 176.
+(pdftex.def)             Requested size: 167.87108pt x 94.13216pt.
+
+[15 <./img/phylofriend.png> <./img/weights.png>] [16]
+<img/node_with_samples.png, id=235, 167.1846pt x 71.5473pt>
+File: img/node_with_samples.png Graphic file (type png)
+
+<use img/node_with_samples.png>
+Package pdftex.def Info: img/node_with_samples.png used on input line 300.
+(pdftex.def)             Requested size: 167.87108pt x 71.84622pt.
+ [17]
+<img/node_with_branches.png, id=252, 158.5122pt x 71.5473pt>
+File: img/node_with_branches.png Graphic file (type png)
+
+<use img/node_with_branches.png>
+Package pdftex.def Info: img/node_with_branches.png used on input line 335.
+(pdftex.def)             Requested size: 167.87108pt x 75.77643pt.
+ [18 <./img/node_with_samples.png> <./img/node_with_branches.png>] <img/nodes_i
+n_row.png, id=266, 218.9781pt x 53.4798pt>
+File: img/nodes_in_row.png Graphic file (type png)
+
+<use img/nodes_in_row.png>
+Package pdftex.def Info: img/nodes_in_row.png used on input line 380.
+(pdftex.def)             Requested size: 219.08612pt x 53.50821pt.
+ [19 <./img/nodes_in_row.png>]) [20]
+(./references.tex)
 No file phyloage.bbl.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 35.
-[16
+[21
 
 ]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 35.
@@ -924,28 +953,34 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 35.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 35.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 35.
 Package rerunfilecheck Info: File `phyloage.out' has not changed.
-(rerunfilecheck)             Checksum: 4E8799282B7E6C924669D2E97CF3C465;1907.
+(rerunfilecheck)             Checksum: 800B4D27F27B082DB326744358350451;2463.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 35.
  ) 
 Here is how much of TeX's memory you used:
- 9799 strings out of 494394
- 132835 string characters out of 6171060
- 201716 words of memory out of 5000000
- 12929 multiletter control sequences out of 15000+600000
+ 9862 strings out of 494394
+ 133824 string characters out of 6171059
+ 203761 words of memory out of 5000000
+ 12958 multiletter control sequences out of 15000+600000
  10126 words of font info for 34 fonts, out of 8000000 for 9000
  430 hyphenation exceptions out of 8191
- 29i,6n,30p,328b,404s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,11n,33p,385b,404s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/dirk/.texmf-var/fonts/pk/ljfour/lh/lh-t2a/larm1200.600pk></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmtt12.pfb>
-Output written on phyloage.pdf (16 pages, 269298 bytes).
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on phyloage.pdf (21 pages, 437745 bytes).
 PDF statistics:
- 280 PDF objects out of 1000 (max. 8388607)
- 237 compressed objects within 3 object streams
- 67 named destinations out of 1000 (max. 500000)
- 120 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 388 PDF objects out of 1000 (max. 8388607)
+ 324 compressed objects within 4 object streams
+ 97 named destinations out of 1000 (max. 500000)
+ 156 words of extra memory for PDF output out of 10000 (max. 10000000)
 

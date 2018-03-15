@@ -1,6 +1,6 @@
 \section{Theory}
 
-\subsection{Modal Haplotype}
+\subsection{Modal haplotype}
 
 Phyloage uses Y-STR mutation counting to estimate the TMRCA
 (Time to Most Recent Common Ancestor) for a group of persons.
@@ -54,7 +54,7 @@ conditions must be satisfied:
 \end{enumerate}
 
 
-\subsection{Maximum Parsimony Method}
+\subsection{Maximum parsimony method}
 
 As default Phyloage uses an algorithm that tries to satisfy
 the maximum parsimony criterion \cite{Wiki-Maximum_parsimony}.
@@ -123,7 +123,7 @@ please consult the program's source code documentation
 \cite{PhyloageSourceDoc} directly.
 
 
-\subsection{Phylofriend Method}
+\subsection{Phylofriend method}
 
 Phyloage also provides an alternative method to calculate
 the modal haplotypes. It is very simple and uses the same
@@ -157,7 +157,259 @@ research goals. I am afraid that I can not give a general
 recommendation. For sparsely populated trees both methods won't
 work very well due to the difficulties involved.
 For densely populated trees both methods, maximum parsimony
-and phylofriend, should yield similar results.
+and Phylofriend, should yield similar results.
+
+
+\subsection{\label{section_weights}Calculating weights for trees (Not implemented yet)}
+
+Each node of a tree connects several branches and each branch
+yields it's own result when calculating the time to the common
+ancestor. To calculate the age of a node, the ages of all substream
+branches must be taken into account (see figure \ref{weights}).
+The first versions of this
+program used the average value of all branches. This is simple
+but not correct because in this model a single lineage counts as
+much as a densely populated branch.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=5.9cm]{img/weights.png}
+\caption{\label{weights} A number N of samples with different age
+estimates $a_1$ to $a_N$ to the common ancestor.}
+\end{figure}
+
+To get a better time estimate we must put weights to individual
+branches so that single lineages count less and many lineages
+count more. To calculate the weights we start with a weighted
+time estimate:
+
+\begin{equation}
+t = c \sum_{i = 1}^{N} w_i a_i    \label{timeestimate}
+\end{equation}
+
+\begin{tabular}{ll}
+t: &  Time to the common ancestor / age of the node\\
+c: &  Constant (assumed to be one in the following calculations)\\
+a: &  Age estimate of a single branch in arbitrary units\\
+w: &  Weight of a branch\\
+N: &  Number of substream branches
+\end{tabular}
+\vspace{1em}
+
+And because we are using a weighted average the sum of all
+weights must be equal to 1:
+
+\begin{equation}
+\sum_{i = 1}^{N} w_i = 1  \label{normalization}
+\end{equation}
+
+How should the weights be calculated. A sensible condition
+is that the error of our time estimate should be as small as
+possible. According to the Gaussian error propagation law
+the square of the standard deviation of $t$ is
+
+\begin{equation}
+\sigma_t^2 = \sum_{i = 1}^{N} \left(\frac{\partial t}{\partial a_i}
+\right)^2 \sigma_i^2  \label{gauss}
+\end{equation}
+
+\begin{tabular}{ll}
+t: &  Time to the common ancestor / age of the node\\
+a: &  Age estimate of a single branch\\
+$\sigma$: &  Standard deviation\\
+N: &  Number of substream branches
+\end{tabular}
+\vspace{1em}
+
+Using equation \ref{timeestimate} we see that the derivatives
+are the weights we are looking for:
+
+\begin{equation}
+\frac{\partial t}{\partial a_i} = w_i
+\end{equation}
+
+And thus we can write equation \ref{gauss} as
+
+\begin{equation}
+\sigma_t^2 = \sum_{i = 1}^{N} w_i^2 \sigma_i^2 \label{sigma_square}
+\end{equation}
+
+To get the minimum of $\sigma_t$ with respect to the
+weights, the partial derivatives of all branches must
+be zero.
+
+\begin{equation}
+0 =\frac{\partial \sigma_t^2}{\partial w_i} 
+= 2 \sigma_i^2 w_i + \sum_{j = 1, j \neq i}^{N} 2 \sigma_j^2 w_j 
+\frac{\partial w_j}{\partial w_i} \label{minimum}
+\end{equation}
+
+Now we have too many variables to calculate the result
+directly. So we use a little trick and look only at pairs of
+weights while assuming that all others are constant. In this
+case most of the partial derivatives in equation \ref{minimum}
+are zero:
+
+\begin{equation}
+\frac{\partial w_k}{\partial w_i} = 0 \ for \ k \neq j \ and \ k \neq i
+\end{equation}
+
+And thus equation \ref{minimum} can be simplified to:
+
+\begin{equation}
+0 = 2 \sigma_i^2 w_i + 2 \sigma_j^2 w_j 
+\frac{\partial w_j}{\partial w_i} \label{min}
+\end{equation}
+
+Because the sum of all weights must be one (equation \ref{normalization})
+$\frac{\partial w_j}{\partial w_i} = -1$ and we can write
+
+\begin{equation}
+\sigma_i^2 w_i = \sigma_j^2 w_j
+\end{equation}
+
+or
+
+\begin{equation}
+\frac{w_i}{w_j} = \frac{\sigma_j^2}{\sigma_i^2}
+\end{equation}
+
+Now we know that $w_i \sim 1/\sigma_i^2$. Again because the sum
+of all weights must be one we can write $w_i$ as
+
+\begin{equation}
+w_i = \frac{1}{\sum_{j=1}^{N}\frac{1}{\sigma_j^2}} \ \frac{1}{\sigma_i^2}
+\end{equation}
+
+This is the formula for the weights. At first sight it looks
+pretty complicated but in practice it has a simple meaning. For
+example it states that two lineages count twice as much as a
+single lineage.
+
+For real world trees calculating the standard deviations is
+not always easy. So this is what we have to do in the next section.
+
+
+\subsection{Calculating standard deviations}
+
+
+\subsubsection*{Node with samples}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=5.9cm]{img/node_with_samples.png}
+\caption{\label{node_with_samples} A number N of samples with different
+numbers of mutations $m_1$ to $m_N$ to the common ancestral node.}
+\end{figure}
+
+It is common that a node is connected to several samples.
+The distance from the node to each sample is a number of
+mutations $m_i$. Figure \ref{node_with_samples} illustrates
+the situation. In this case we can take advantage of the laws
+of Gaussian statistics and the standard deviation for the
+average number of mutation becomes:
+
+\begin{eqnarray}
+\sigma_{\bar{m}} & = & \sqrt{\frac{\bar{m}}{N}}\\
+                 & = & \frac{1}{\sqrt{N}} \sqrt{\frac{1}{N} \sum_{i=1}^{N}m_i}\\
+\Leftrightarrow\ \sigma_{\bar{m}}^2 & = & \frac{1}{N^2} \sum_{i=1}^{N}m_i
+\end{eqnarray}
+
+\begin{tabular}{ll}
+$\sigma_{\bar{m}}$: &  Standard deviation of the average number of mutations\\
+$\bar{m}$: & Average number of mutations to the common ancestor\\
+$m_i$: &  Number of mutations in branch i\\
+N: &  Number of samples
+\end{tabular}
+\vspace{1em}
+
+This is also true for Poisson statistics but for Poisson
+statistics the standard deviation becomes asymmetric to
+the average number of mutations.
+
+
+\subsubsection*{Node with branches}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=5.9cm]{img/node_with_branches.png}
+\caption{\label{node_with_branches} A number N of branches
+connected to a node. Each branch has it's own time estimate
+$a_i$ and standard deviation $\sigma_i$.}
+\end{figure}
+
+A similar but not identical case is when a node is connected
+to other nodes by several branches. For each branch a time
+estimate and a standard deviation exists and we do not necessarily
+know how they were determined (see figure \ref{node_with_branches}).
+
+This is exactly the same situation as in section \ref{section_weights}
+and we can write the age estimate as a weighted average:
+
+\begin{equation}
+a = \sum_{i = 1}^{N} w_i a_i
+\end{equation}
+
+\begin{tabular}{ll}
+a: &  Total age estimate in arbitrary units\\
+$a_i$: &  Age estimate of a single branch\\
+w: &  Weight of a branch\\
+N: &  Number of substream branches\\
+$\sigma$: & Standard deviation
+\end{tabular}
+\vspace{1em}
+
+Because we have already calculated this case we can use
+equation \ref{sigma_square} to calculate the standard
+deviation.
+
+\begin{equation}
+\sigma_a^2 = \sum_{i = 1}^{N} w_i^2 \sigma_i^2 
+\end{equation}
+
+
+\subsubsection*{Nodes in a row}
+
+The last case is when three nodes are connected by
+two branches in line (see figure \ref{nodes_in_row}).
+Again each branch has it's own time estimate and
+standard deviation. 
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=7.7cm]{img/nodes_in_row.png}
+\caption{\label{nodes_in_row} Two branches in a row.
+Each branch has it's own time estimate
+$a_i$ and standard deviation $\sigma_i$.}
+\end{figure}
+
+We get the total age estimate $a$ if we add the age estimates
+of the two branches together:
+
+\begin{equation}
+a = a_1 + a_2
+\end{equation}
+
+The standard deviation is determined by the Gaussian error
+propagation law:
+
+\begin{eqnarray}
+\sigma_a^2 & = & \left( \frac{\partial a}{\partial a_1} \right)^2 \sigma_{a_1}^2
++ \left( \frac{\partial a}{\partial a_2} \right)^2 \sigma_{a_2}^2\\
+\Rightarrow\ \sigma_a^2 & = & \sigma_{a_1}^2 + \sigma_{a_2}^2
+\end{eqnarray}
+
+\begin{tabular}{ll}
+$a_i$: &  Age estimate of a single branch in arbitrary units\\
+$a$: & Total age\\
+$\sigma$: &  Standard deviation
+\end{tabular}
+\vspace{1em}
+
+
+
+
+
 
 
 
