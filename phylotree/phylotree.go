@@ -166,6 +166,8 @@ type Clade struct {
 	AgeSTR float64
 	// STRCountDownstream is the average number of downstream STR mutations.
 	STRCountDownstream float64
+	// Sigma2 is the squared standard deviation of STRCountDownstream.
+	Sigma2 float64
 	// TMRCA_STR is the time to the most recent common Ancestor
 	// for all downstream samples.
 	TMRCA_STR float64
@@ -355,30 +357,40 @@ func (c *Clade) CalculateDistances(mutationRates genetic.YstrMarkers, distance g
 // offset is added to all calculated ages to account for the ages
 // of living persons. YFull currently uses an offset of 60 years.
 func (c *Clade) CalculateAge(gentime, calibration, offset float64) {
-	var nChilds float64 = 0
-	var count float64 = 0
+	var avgCalc avgCalculator
 	// Count STR mutations for samples.
-	for i, _ := range c.Samples {
-		if c.Samples[i].STRCount >= 0 {
-			count += c.Samples[i].STRCount
-			nChilds++
+	// average value
+	avgSamples := 0.0
+	// sigma squared
+	sigma2Samples := 0.0
+	nSamples := float64(len(c.Samples))
+	if nSamples > 0 {
+		for i, _ := range c.Samples {
+			if c.Samples[i].STRCount > 0 {
+				avgSamples += c.Samples[i].STRCount
+			}
+		}
+		avgSamples /= nSamples
+		sigma2Samples = avgSamples / nSamples
+		if sigma2Samples > 0 {
+			avgCalc.add(avgSamples, sigma2Samples)
 		}
 	}
 	// Count STR mutations for subclades.
 	for i, _ := range c.Subclades {
 		c.Subclades[i].CalculateAge(gentime, calibration, offset)
 		subcladeSTRs := c.Subclades[i].STRCount + c.Subclades[i].STRCountDownstream
-		if subcladeSTRs >= 0 {
-			count += subcladeSTRs
-			nChilds++
+		subcladeSigma2 := c.Subclades[i].STRCount + c.Subclades[i].Sigma2
+		if subcladeSigma2 > 0 {
+			avgCalc.add(subcladeSTRs, subcladeSigma2)
 		}
 	}
 	// Calculate average number of mutations.
-	if nChilds > 0 {
-		c.STRCountDownstream = count / nChilds
+	if avgCalc.size > 0 {
+		c.STRCountDownstream, c.Sigma2 = avgCalc.avg()
 		c.TMRCA_STR = c.STRCountDownstream*gentime*calibration + offset
+		c.AgeSTR = (c.STRCount+c.STRCountDownstream)*gentime*calibration + offset
 	}
-	c.AgeSTR = (c.STRCount+c.STRCountDownstream)*gentime*calibration + offset
 }
 
 func (c *Clade) String() string {

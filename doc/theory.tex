@@ -160,7 +160,7 @@ For densely populated trees both methods, maximum parsimony
 and Phylofriend, should yield similar results.
 
 
-\subsection{\label{section_weights}Calculating weights for trees (Not implemented yet)}
+\subsection{\label{section_weights}Calculating weights for trees}
 
 Each node of a tree connects several branches and each branch
 yields it's own result when calculating the time to the common
@@ -184,14 +184,13 @@ count more. To calculate the weights we start with a weighted
 time estimate:
 
 \begin{equation}
-t = c \sum_{i = 1}^{N} w_i a_i    \label{timeestimate}
+a = \sum_{i = 1}^{N} w_i a_i    \label{timeestimate}
 \end{equation}
 
 \begin{tabular}{ll}
-t: &  Time to the common ancestor / age of the node\\
-c: &  Constant (assumed to be one in the following calculations)\\
-a: &  Age estimate of a single branch in arbitrary units\\
-w: &  Weight of a branch\\
+$a$: &  Average time estimate in arbitrary units\\
+$a_i$: &  Age estimate of a single branch\\
+$w_i$: &  Weight of a branch\\
 N: &  Number of substream branches
 \end{tabular}
 \vspace{1em}
@@ -203,20 +202,20 @@ weights must be equal to 1:
 \sum_{i = 1}^{N} w_i = 1  \label{normalization}
 \end{equation}
 
-How should the weights be calculated. A sensible condition
-is that the error of our time estimate should be as small as
+How should the weights be calculated? A sensible condition
+is that the relative error of our time estimate should be as small as
 possible. According to the Gaussian error propagation law
-the square of the standard deviation of $t$ is
+the square of the standard deviation of $a$ is
 
 \begin{equation}
-\sigma_t^2 = \sum_{i = 1}^{N} \left(\frac{\partial t}{\partial a_i}
+\sigma_a^2 = \sum_{i = 1}^{N} \left(\frac{\partial a}{\partial a_i}
 \right)^2 \sigma_i^2  \label{gauss}
 \end{equation}
 
 \begin{tabular}{ll}
-t: &  Time to the common ancestor / age of the node\\
-a: &  Age estimate of a single branch\\
-$\sigma$: &  Standard deviation\\
+$\sigma_a^2$: &  Standard deviation of the age estimate a\\
+$a_i$: &  Age estimate of branch i\\
+$\sigma_i$: &  Standard deviation of $a_i$\\
 N: &  Number of substream branches
 \end{tabular}
 \vspace{1em}
@@ -225,69 +224,54 @@ Using equation \ref{timeestimate} we see that the derivatives
 are the weights we are looking for:
 
 \begin{equation}
-\frac{\partial t}{\partial a_i} = w_i
+\frac{\partial a}{\partial a_i} = w_i
 \end{equation}
 
 And thus we can write equation \ref{gauss} as
 
 \begin{equation}
-\sigma_t^2 = \sum_{i = 1}^{N} w_i^2 \sigma_i^2 \label{sigma_square}
+\sigma_a^2 = \sum_{i = 1}^{N} w_i^2 \sigma_i^2 \label{sigma_square}
 \end{equation}
 
-To get the minimum of $\sigma_t$ with respect to the
-weights, the partial derivatives of all branches must
-be zero.
+Our goal is to minimize the relative error. So $\sigma_a^2/a$
+should be as small as possible. If $\sigma_a^2/a$ is constant
+then all it's derivatives become zero and we have a minimum.
+
+Equations \ref{timeestimate} and \ref{sigma_square} look very
+similar and indeed if $\sigma_a^2/a$ should be constant we may
+write
+
+\begin{eqnarray}
+\sigma_a^2 & = & c\ a \\
+\Leftrightarrow\ \sum_{i = 1}^{N} w_i^2 \sigma_i^2 & = & c \sum_{i = 1}^{N} w_i a_i
+\end{eqnarray}
+
+\begin{tabular}{ll}
+a: &  Age\\
+$\sigma$: &  Standard deviation\\
+w: & Weight\\
+c: & Constant (yet unknown)\\
+N: & Number of substream branches
+\end{tabular}
+\vspace{1em}
+
+For symmetry reasons we can concentrate on a single term:
+
+\begin{eqnarray}
+w_i^2 \sigma_i^2 & = & c\ w_i a_i\\
+\Leftrightarrow\ w_i & = & c\ \frac{a_i}{\sigma_i^2}
+\end{eqnarray}
+
+To calculate the constant $c$ we remember that the sum of all
+weights must be one (equation \ref{normalization}) and we get 
 
 \begin{equation}
-0 =\frac{\partial \sigma_t^2}{\partial w_i} 
-= 2 \sigma_i^2 w_i + \sum_{j = 1, j \neq i}^{N} 2 \sigma_j^2 w_j 
-\frac{\partial w_j}{\partial w_i} \label{minimum}
+w_i = \frac{1}{\sum_{j=1}^{N}\frac{a_j}{\sigma_j^2}} \ \frac{a_i}{\sigma_i^2}
 \end{equation}
 
-Now we have too many variables to calculate the result
-directly. So we use a little trick and look only at pairs of
-weights while assuming that all others are constant. In this
-case most of the partial derivatives in equation \ref{minimum}
-are zero:
-
-\begin{equation}
-\frac{\partial w_k}{\partial w_i} = 0 \ for \ k \neq j \ and \ k \neq i
-\end{equation}
-
-And thus equation \ref{minimum} can be simplified to:
-
-\begin{equation}
-0 = 2 \sigma_i^2 w_i + 2 \sigma_j^2 w_j 
-\frac{\partial w_j}{\partial w_i} \label{min}
-\end{equation}
-
-Because the sum of all weights must be one (equation \ref{normalization})
-$\frac{\partial w_j}{\partial w_i} = -1$ and we can write
-
-\begin{equation}
-\sigma_i^2 w_i = \sigma_j^2 w_j
-\end{equation}
-
-or
-
-\begin{equation}
-\frac{w_i}{w_j} = \frac{\sigma_j^2}{\sigma_i^2}
-\end{equation}
-
-Now we know that $w_i \sim 1/\sigma_i^2$. Again because the sum
-of all weights must be one we can write $w_i$ as
-
-\begin{equation}
-w_i = \frac{1}{\sum_{j=1}^{N}\frac{1}{\sigma_j^2}} \ \frac{1}{\sigma_i^2}
-\end{equation}
-
-This is the formula for the weights. At first sight it looks
-pretty complicated but in practice it has a simple meaning. For
-example it states that two lineages count twice as much as a
-single lineage.
-
-For real world trees calculating the standard deviations is
-not always easy. So this is what we have to do in the next section.
+This is the formula for the weights. For real-world trees we also
+need to calculate the standard deviations of all branches.
+This is done in the next section.
 
 
 \subsection{Calculating standard deviations}
