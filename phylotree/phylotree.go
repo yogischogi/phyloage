@@ -171,6 +171,10 @@ type Clade struct {
 	// TMRCA_STR is the time to the most recent common Ancestor
 	// for all downstream samples.
 	TMRCA_STR float64
+	// TMRCAlower and TMRCAupper are the lower and upper bounds
+	// of the 95% confidence interval.
+	TMRCAlower float64
+	TMRCAupper float64
 }
 
 // newClade creates a new Clade from a textual representation.
@@ -390,6 +394,9 @@ func (c *Clade) CalculateAge(gentime, calibration, offset float64) {
 		c.STRCountDownstream, c.Sigma2 = avgCalc.avg()
 		c.TMRCA_STR = c.STRCountDownstream*gentime*calibration + offset
 		c.AgeSTR = (c.STRCount+c.STRCountDownstream)*gentime*calibration + offset
+		lower, upper := avgCalc.confidenceIntervals(c.STRCountDownstream, c.Sigma2)
+		c.TMRCAlower = lower*gentime*calibration + offset
+		c.TMRCAupper = upper*gentime*calibration + offset
 	}
 }
 
@@ -411,8 +418,8 @@ func (c *Clade) prettyPrint(buffer *bytes.Buffer, indent int) {
 	// Write time estimates.
 	if c.STRCountDownstream >= 0 {
 		buffer.WriteString(
-			fmt.Sprintf(", STRs Downstream: %.0f, formed: %.0f, TMRCA: %.0f",
-				c.STRCountDownstream, c.AgeSTR, c.TMRCA_STR))
+			fmt.Sprintf(", STRs Downstream: %.0f, formed: %.0f, TMRCA: %.0f, CI:[%.0f, %.0f]",
+				c.STRCountDownstream, c.AgeSTR, c.TMRCA_STR, c.TMRCAlower, c.TMRCAupper))
 	}
 	buffer.WriteString("\r\n")
 
