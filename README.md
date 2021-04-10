@@ -9,6 +9,15 @@ tree and thus tries to circumvent the traditional shortcomings
 of STR counting, which is often heavily influenced by younger
 family branches.
 
+The program can also be used to generate time estimates from
+the number of SNP mutations on each branch of a phylogenetic
+tree. The algorithm
+
+* uses weighted averages.
+* performs a top down recalculation of the input tree so that
+  subclades can never be older than it's parent.
+* calculates 95% confidence intervals analytically.
+
 
 ## Documentation
 

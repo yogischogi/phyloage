@@ -400,6 +400,21 @@ func (c *Clade) CalculateAge(gentime, calibration, offset float64) {
 	}
 }
 
+// RecalculateAge performs a top town recalculation for the
+// age and TMRCA values of this clade's subclades.
+// The recalculation calculates a new calibration factor for
+// each subclade so that the age of the subclade equals the TMRCA value
+// of it's parent. This way a sublcade can never be older than it's parent.
+func (c *Clade) RecalculateAge(gentime, calibration, offset float64) {
+	for i, _ := range c.Subclades {
+		// Get new estimate for calibration factor based on the age of this clade.
+		newcal := (c.TMRCA_STR - offset) / ((c.Subclades[i].STRCount + c.Subclades[i].STRCountDownstream) * gentime)
+		// Recalculate age and TMRCA for subclade
+		c.Subclades[i].CalculateAge(gentime, newcal, offset)
+		c.Subclades[i].RecalculateAge(gentime, newcal, offset)
+	}
+}
+
 func (c *Clade) String() string {
 	var buffer bytes.Buffer
 	c.prettyPrint(&buffer, 0)

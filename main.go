@@ -22,6 +22,7 @@ func main() {
 		treeout    = flag.String("treeout", "", "Output filename for phylogenetic tree in TXT format.")
 		cal        = flag.Float64("cal", 1, "Calibration factor for TMRCA calculation.")
 		offset     = flag.Float64("offset", 0, "Offset is added to all calculated ages.")
+		topdown    = flag.Bool("topdown", true, "Performs a top down recalculation.")
 		personsin  = flag.String("personsin", "", "Input filename (.txt or .csv) or directory.")
 		mrin       = flag.String("mrin", "", "Filename for the import of mutation rates.")
 		gentime    = flag.Float64("gentime", 1, "Generation time in years.")
@@ -147,6 +148,10 @@ func main() {
 	// file the calculation can be performed even without sample
 	// data.
 	tree.CalculateAge(*gentime, *cal, *offset)
+	// Top down recalculation for more realistic results.
+	if *topdown == true {
+		tree.RecalculateAge(*gentime, *cal, *offset)
+	}
 
 	// Save resulting tree to file or print it out.
 	if *treeout != "" {
