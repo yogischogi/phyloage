@@ -392,6 +392,128 @@ $\sigma$: &  Standard deviation
 
 
 
+\subsection{Top down recalculation}
+
+\subsubsection*{Varying mutation rates}
+
+Different projects usually observe different mutation rates.
+This is due to a number of different reasons and it is not all
+statistical variation.
+
+One important factor is generation time. For paternal lineages
+32 years on average is a good estimate. For my own family it is
+just 24 years. This increases the mutation rate by a factor of
+1.33 and can make a huge difference for events that took place
+far back in time. 
+
+Generation times are not purely statistical. They often depend
+on the circumstances. For example a farmer's son who lives on his
+family's farm can start working, earning money and taking a wife
+earlier than an artisan who has to learn his craft for years and
+then make a living in an expensive city.
+
+Of course, times and cultural norms change and thus generation
+times depend on historic time frames and cultural environments.
+
+Another important topic is genome coverage. Next-generation-
+sequencing tests cover different parts of the genome with different
+quality. This depends on the test (Big Y, Big Y 500, Big Y 700),
+the sample quality and of course statistical variations.
+
+There may also be other factors that influence mutations rates
+that are not well understood yet. 
+
+\subsubsection*{Proposed solution}
+
+Because observed mutation rates vary from branch to branch on
+a phylogenetic tree, \emph{phyloage} can perform a top down
+recalculation to take this into account.
+
+The initial time estimates for the tree are calculated bottom up
+using a sensible mutation rate to start with. Now the top
+node should display the best age estimate because this is where most
+samples came into play.
+
+After that the top down recalculation starts. Because the top node
+exhibits the best age estimate, the mutation rates for all subclades
+are recalculated so that the age estimate for each subclade equals
+the TMRCA estimate of the top node. Then all age estimates for all
+subclades are recalculated. The whole top down recalculation is done
+recursively until the end nodes are reached.
+
+This approach has several advantages:
+
+\begin{enumerate}
+\item A subclade can never be older than it's parent.
+    This is statistically possible but clearly not in reality.
+\item Different mutation rates are taken into account. The
+    previous section has shown that differences in observed mutation
+    rates are real.
+\item The age estimates should be closer to real history.
+\end{enumerate}
+
+
+
+\subsection{95\% confidence intervals}
+
+\emph{Phyloage} displays 95\% confidence intervals on the
+output tree. This means that a given age estimates has a
+probability of 95\% to be in the given time frame.
+
+Confidence intervals are calculated using Poisson statistics.
+For a given mutation count $c$ and a confidence interval $[a, b]$,
+two Poisson distributions are calculated so that the upper
+95\% boundary of the lower Poisson distribution and the lower
+95\% boundary of the higher Poisson distribution both are equal
+to $c$ or
+
+\begin{equation}
+Upper_{Pois(a)} = c = Lower_{Pois(b)}
+\end{equation}
+
+\begin{tabular}{ll}
+c: &  Number of mutations\\
+$[a, b]$: &  Confidence interval\\
+$Upper_{Pois(a)}$: & Upper 95\% boundary of $Pois(a)$\\
+$Lower_{Pois(b)}$: & Lower 95\% boundary of $Pois(b)$
+\end{tabular}
+\vspace{1em}
+
+For higher mutation counts the Poisson distributions are
+approximated by Gaussian distributions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
